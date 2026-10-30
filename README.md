@@ -34,8 +34,8 @@ Nada é publicado se uma checagem de erro falhar.
 | 6 | DFC e DMPL | Concluída: `src/dfc_dmpl.py`, `docs/06_dfc_e_dmpl.md` |
 | 7 | DRA, DVA e notas | Concluída: `src/dra_dva.py`, `src/notas.py`, `docs/07_dra_dva_e_notas.md` |
 | 8 | Indicadores | Concluída: `src/indicadores.py`, `docs/08_indicadores.md` |
-| 9 | Central de qualidade | Próxima |
-| 10 | Excel e PDF | — |
+| 9 | Central de qualidade | Concluída: `src/qualidade.py`, `docs/09_central_de_qualidade.md` |
+| 10 | Excel e PDF | Próxima |
 | 11 | Power BI | — |
 | 12 | Web e vitrine | — |
 
@@ -68,6 +68,7 @@ python src/dfc_dmpl.py             # mostra a DFC e a DMPL do 3T26, com as confe
 python src/dra_dva.py              # mostra a DRA e a DVA do 3T26
 python src/notas.py                # mostra as 10 notas explicativas e confere com as demonstrações
 python src/indicadores.py          # indicadores trimestrais e reconciliação do EBITDA (Res. CVM 156)
+python src/qualidade.py            # Central de qualidade: 20 verificações; libera ou bloqueia a publicação
 pytest                             # roda todos os testes
 ```
 
@@ -82,3 +83,4 @@ pytest                             # roda todos os testes
 - `docs/06_dfc_e_dmpl.md`: DFC indireta conferida pelo método direto, transações sem caixa e DMPL por coluna
 - `docs/07_dra_dva_e_notas.md`: DRA, DVA com o ajuste do CPC 09 e as 10 notas explicativas
 - `docs/08_indicadores.md`: fórmulas dos indicadores, convenções e EBITDA
+- `docs/09_central_de_qualidade.md`: as 20 verificações, erro × alerta e o registro de cada execução
