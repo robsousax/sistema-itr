@@ -32,8 +32,8 @@ Nada é publicado se uma checagem de erro falhar.
 | 4 | Gerador de eventos | Concluída: `config/roteiro.yaml`, `entrada/entrada_itr.xlsx`, `docs/04_gerador_de_dados.md` |
 | 5 | BP e DRE | Concluída: `src/demonstracoes.py`, `docs/05_bp_e_dre.md` |
 | 6 | DFC e DMPL | Concluída: `src/dfc_dmpl.py`, `docs/06_dfc_e_dmpl.md` |
-| 7 | DRA, DVA e notas | Próxima |
-| 8 | Indicadores | — |
+| 7 | DRA, DVA e notas | Concluída: `src/dra_dva.py`, `src/notas.py`, `docs/07_dra_dva_e_notas.md` |
+| 8 | Indicadores | Próxima |
 | 9 | Central de qualidade | — |
 | 10 | Excel e PDF | — |
 | 11 | Power BI | — |
@@ -65,6 +65,8 @@ python src/gerar_dados.py          # gera entrada/entrada_itr.xlsx com a contabi
 python src/importar_entrada.py     # valida entrada/entrada_itr.xlsx e grava base/itr.sqlite
 python src/demonstracoes.py        # mostra o BP e a DRE do 3T26 em R$ mil (ou: ... 2T26)
 python src/dfc_dmpl.py             # mostra a DFC e a DMPL do 3T26, com as conferências
+python src/dra_dva.py              # mostra a DRA e a DVA do 3T26
+python src/notas.py                # mostra as 10 notas explicativas e confere com as demonstrações
 pytest                             # roda todos os testes
 ```
 
@@ -77,3 +79,4 @@ pytest                             # roda todos os testes
 - `docs/04_gerador_de_dados.md`: como o roteiro vira lançamentos, a história da Orbe e as simplificações
 - `docs/05_bp_e_dre.md`: como o motor monta o BP e a DRE, períodos do CPC 21 e lucro por ação
 - `docs/06_dfc_e_dmpl.md`: DFC indireta conferida pelo método direto, transações sem caixa e DMPL por coluna
+- `docs/07_dra_dva_e_notas.md`: DRA, DVA com o ajuste do CPC 09 e as 10 notas explicativas
