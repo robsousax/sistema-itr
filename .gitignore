@@ -7,6 +7,7 @@ venv/
 
 # Gerados pelo sistema (podem ser recriados a qualquer momento)
 base/*.sqlite
+base/*.tmp
 saidas/**/*.xlsx
 saidas/**/*.pdf
 exportacao/*.parquet

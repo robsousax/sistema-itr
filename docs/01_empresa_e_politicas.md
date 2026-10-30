@@ -120,6 +120,11 @@ provisões entra quando o roteiro da empresa criar um evento desse tipo.
   perda esperada com créditos (dedutível só quando atende ao art. 9 da Lei 9.430/96) e a provisão
   para perdas em estoques (indedutível até a baixa efetiva).
 - O ativo diferido é reconhecido porque há lucro tributável futuro provável.
+- **Alíquota do diferido: 34%** (IRPJ 15% + adicional 10% + CSLL 9%). O diferido é mensurado
+  pela alíquota esperada quando a diferença reverter (CPC 32, item 47). Como a Orbe tem lucro
+  tributável acima do limite do adicional de IRPJ (R$ 60 mil por trimestre), as reversões
+  também sofrem o adicional. O IRPJ diferido usa 25% e a CSLL diferida usa 9%. Parâmetro:
+  `tributacao.aliquota_diferido` em `config/empresa.yaml`.
 - Depreciação contábil e fiscal são iguais (sem diferença temporária).
 
 ### 3.12 Tributos sobre vendas e compras

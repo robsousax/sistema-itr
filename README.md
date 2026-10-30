@@ -25,11 +25,11 @@ Nada é publicado se uma checagem de erro falhar.
 
 | Etapa | Entrega | Situação |
 | --- | --- | --- |
-| 0 | Ambiente e Git | Estrutura pronta; instalação no seu PC: `docs/00_guia_instalacao_windows.md` |
+| 0 | Ambiente e Git | Concluída: `docs/00_guia_instalacao_windows.md` |
 | 1 | Empresa e políticas contábeis | Concluída: `docs/01_empresa_e_politicas.md`, `config/empresa.yaml` |
 | 2 | Plano de contas e mapeamentos | Concluída: `config/*.csv`, `docs/02_plano_de_contas_e_regras.md` |
-| 3 | Contrato de entrada e SQLite | Próxima |
-| 4 | Gerador de eventos | — |
+| 3 | Contrato de entrada e SQLite | Concluída: `entrada/modelo_entrada.xlsx`, `docs/03_contrato_de_entrada.md` |
+| 4 | Gerador de eventos | Próxima |
 | 5 | BP e DRE | — |
 | 6 | DFC e DMPL | — |
 | 7 | DRA, DVA e notas | — |
@@ -60,6 +60,8 @@ sistema-itr/
 ```bash
 python src/checar_config.py        # confere se toda conta e todo evento têm classificação
 python src/config_para_excel.py    # gera config/plano_de_contas_e_mapeamentos.xlsx para consulta
+python src/gerar_modelo_entrada.py # gera entrada/modelo_entrada.xlsx (Excel de entrada em branco)
+python src/importar_entrada.py     # valida entrada/entrada_itr.xlsx e grava base/itr.sqlite
 pytest                             # roda todos os testes
 ```
 
@@ -68,3 +70,4 @@ pytest                             # roda todos os testes
 - `docs/00_guia_instalacao_windows.md`: preparar o computador
 - `docs/01_empresa_e_politicas.md`: a empresa, as políticas contábeis e as limitações
 - `docs/02_plano_de_contas_e_regras.md`: plano de contas e como cada demonstração é montada
+- `docs/03_contrato_de_entrada.md`: formato do Excel de entrada, validações e tabelas da base

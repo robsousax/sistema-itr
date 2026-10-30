@@ -43,6 +43,8 @@ tributacao:
   irpj_adicional_aliquota: 0.10
   irpj_adicional_limite_trimestral_rs: 60000.00
   csll_aliquota: 0.09
+  aliquota_diferido: 0.34              # IRPJ 15% + adicional 10% + CSLL 9%: a Orbe excede o limite
+                                       # do adicional, então as diferenças revertem a 34% (CPC 32)
   pis_nao_cumulativo: 0.0165
   cofins_nao_cumulativo: 0.076
   icms_aliquota_unica_simplificada: 0.18   # simplificação: ver docs/01, seção Limitações
