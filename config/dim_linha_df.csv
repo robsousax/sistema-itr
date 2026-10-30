@@ -1,0 +1,160 @@
+﻿demonstracao;codigo;descricao;nivel;codigo_pai;tipo_linha;formula;tipo_valor;ordem
+BP;1;Ativo Total;1;;grupo;;posicao;10
+BP;1.01;Ativo Circulante;2;1;grupo;;posicao;20
+BP;1.01.01;Caixa e Equivalentes de Caixa;3;1.01;dado;;posicao;30
+BP;1.01.03;Contas a Receber;3;1.01;grupo;;posicao;40
+BP;1.01.03.01;Clientes;4;1.01.03;dado;;posicao;50
+BP;1.01.04;Estoques;3;1.01;dado;;posicao;60
+BP;1.01.06;Tributos a Recuperar;3;1.01;grupo;;posicao;70
+BP;1.01.06.01;Tributos Correntes a Recuperar;4;1.01.06;dado;;posicao;80
+BP;1.01.07;Despesas Antecipadas;3;1.01;dado;;posicao;90
+BP;1.01.08;Outros Ativos Circulantes;3;1.01;grupo;;posicao;100
+BP;1.01.08.03;Outros;4;1.01.08;dado;;posicao;110
+BP;1.02;Ativo Não Circulante;2;1;grupo;;posicao;120
+BP;1.02.01;Ativo Realizável a Longo Prazo;3;1.02;grupo;;posicao;130
+BP;1.02.01.07;Tributos Diferidos;4;1.02.01;grupo;;posicao;140
+BP;1.02.01.07.01;Imposto de Renda e Contribuição Social Diferidos;5;1.02.01.07;dado;;posicao;150
+BP;1.02.03;Imobilizado;3;1.02;grupo;;posicao;160
+BP;1.02.03.01;Imobilizado em Operação;4;1.02.03;dado;;posicao;170
+BP;1.02.03.03;Imobilizado em Andamento;4;1.02.03;dado;;posicao;180
+BP;1.02.04;Intangível;3;1.02;grupo;;posicao;190
+BP;1.02.04.01;Intangíveis;4;1.02.04;dado;;posicao;200
+BP;2;Passivo Total;1;;grupo;;posicao;210
+BP;2.01;Passivo Circulante;2;2;grupo;;posicao;220
+BP;2.01.01;Obrigações Sociais e Trabalhistas;3;2.01;grupo;;posicao;230
+BP;2.01.01.01;Obrigações Sociais;4;2.01.01;dado;;posicao;240
+BP;2.01.01.02;Obrigações Trabalhistas;4;2.01.01;dado;;posicao;250
+BP;2.01.02;Fornecedores;3;2.01;grupo;;posicao;260
+BP;2.01.02.01;Fornecedores Nacionais;4;2.01.02;dado;;posicao;270
+BP;2.01.03;Obrigações Fiscais;3;2.01;grupo;;posicao;280
+BP;2.01.03.01;Obrigações Fiscais Federais;4;2.01.03;grupo;;posicao;290
+BP;2.01.03.01.01;Imposto de Renda e Contribuição Social a Pagar;5;2.01.03.01;dado;;posicao;300
+BP;2.01.03.01.02;Outras Obrigações Fiscais Federais;5;2.01.03.01;dado;;posicao;310
+BP;2.01.03.02;Obrigações Fiscais Estaduais;4;2.01.03;dado;;posicao;320
+BP;2.01.03.03;Obrigações Fiscais Municipais;4;2.01.03;dado;;posicao;330
+BP;2.01.04;Empréstimos e Financiamentos;3;2.01;grupo;;posicao;340
+BP;2.01.04.01;Empréstimos e Financiamentos;4;2.01.04;grupo;;posicao;350
+BP;2.01.04.01.01;Em Moeda Nacional;5;2.01.04.01;dado;;posicao;360
+BP;2.01.05;Outras Obrigações;3;2.01;grupo;;posicao;370
+BP;2.01.05.02;Outros;4;2.01.05;grupo;;posicao;380
+BP;2.01.05.02.01;Dividendos e JCP a Pagar;5;2.01.05.02;dado;;posicao;390
+BP;2.01.05.02.02;Adiantamentos de Clientes (Passivo de Contrato);5;2.01.05.02;dado;;posicao;400
+BP;2.01.05.02.03;Outras Contas a Pagar;5;2.01.05.02;dado;;posicao;410
+BP;2.02;Passivo Não Circulante;2;2;grupo;;posicao;420
+BP;2.02.01;Empréstimos e Financiamentos;3;2.02;grupo;;posicao;430
+BP;2.02.01.01;Empréstimos e Financiamentos;4;2.02.01;grupo;;posicao;440
+BP;2.02.01.01.01;Em Moeda Nacional;5;2.02.01.01;dado;;posicao;450
+BP;2.02.03;Tributos Diferidos;3;2.02;grupo;;posicao;460
+BP;2.02.03.01;Imposto de Renda e Contribuição Social Diferidos;4;2.02.03;dado;;posicao;470
+BP;2.03;Patrimônio Líquido;2;2;grupo;;posicao;480
+BP;2.03.01;Capital Social Realizado;3;2.03;dado;;posicao;490
+BP;2.03.04;Reservas de Lucros;3;2.03;grupo;;posicao;500
+BP;2.03.04.01;Reserva Legal;4;2.03.04;dado;;posicao;510
+BP;2.03.04.05;Reserva de Retenção de Lucros;4;2.03.04;dado;;posicao;520
+BP;2.03.04.08;Dividendo Adicional Proposto;4;2.03.04;dado;;posicao;530
+BP;2.03.05;Lucros/Prejuízos Acumulados;3;2.03;dado;;posicao;540
+BP;2.03.08;Outros Resultados Abrangentes;3;2.03;dado;;posicao;550
+DRE;3.01;Receita de Venda de Bens e/ou Serviços;2;;dado;;movimento;560
+DRE;3.02;Custo dos Bens e/ou Serviços Vendidos;2;;dado;;movimento;570
+DRE;3.03;Resultado Bruto;2;;formula;3.01 + 3.02;movimento;580
+DRE;3.04;Despesas/Receitas Operacionais;2;;grupo;;movimento;590
+DRE;3.04.01;Despesas com Vendas;3;3.04;dado;;movimento;600
+DRE;3.04.02;Despesas Gerais e Administrativas;3;3.04;dado;;movimento;610
+DRE;3.04.03;Perdas pela Não Recuperabilidade de Ativos;3;3.04;grupo;;movimento;620
+DRE;3.04.03.01;Perda (Reversão) de Crédito Esperada;4;3.04.03;dado;;movimento;630
+DRE;3.04.04;Outras Receitas Operacionais;3;3.04;dado;;movimento;640
+DRE;3.04.05;Outras Despesas Operacionais;3;3.04;dado;;movimento;650
+DRE;3.05;Resultado Antes do Resultado Financeiro e dos Tributos;2;;formula;3.03 + 3.04;movimento;660
+DRE;3.06;Resultado Financeiro;2;;grupo;;movimento;670
+DRE;3.06.01;Receitas Financeiras;3;3.06;dado;;movimento;680
+DRE;3.06.02;Despesas Financeiras;3;3.06;dado;;movimento;690
+DRE;3.07;Resultado Antes dos Tributos sobre o Lucro;2;;formula;3.05 + 3.06;movimento;700
+DRE;3.08;Imposto de Renda e Contribuição Social sobre o Lucro;2;;grupo;;movimento;710
+DRE;3.08.01;Corrente;3;3.08;dado;;movimento;720
+DRE;3.08.02;Diferido;3;3.08;dado;;movimento;730
+DRE;3.09;Resultado Líquido das Operações Continuadas;2;;formula;3.07 + 3.08;movimento;740
+DRE;3.11;Lucro/Prejuízo do Período;2;;formula;3.09;movimento;750
+DRE;3.99;Lucro por Ação - (R$ / Ação);2;;info;;movimento;760
+DRE;3.99.01.01;ON - Lucro Básico por Ação;4;3.99;info;3.11 / media_ponderada_acoes;movimento;770
+DRE;3.99.02.01;ON - Lucro Diluído por Ação;4;3.99;info;3.11 / media_ponderada_acoes_diluidas;movimento;780
+DRA;4.01;Lucro Líquido do Período;2;;formula;3.11;movimento;790
+DRA;4.02;Outros Resultados Abrangentes;2;;dado;;movimento;800
+DRA;4.03;Resultado Abrangente do Período;2;;formula;4.01 + 4.02;movimento;810
+DMPL;5.01;Saldos Iniciais;2;;dado;;movimento;820
+DMPL;5.02;Ajustes de Exercícios Anteriores;2;;dado;;movimento;830
+DMPL;5.03;Saldos Iniciais Ajustados;2;;formula;5.01 + 5.02;movimento;840
+DMPL;5.04;Transações de Capital com os Sócios;2;;grupo;;movimento;850
+DMPL;5.04.01;Aumentos de Capital;3;5.04;dado;;movimento;860
+DMPL;5.04.06;Dividendos;3;5.04;dado;;movimento;870
+DMPL;5.05;Resultado Abrangente Total;2;;grupo;;movimento;880
+DMPL;5.05.01;Lucro Líquido do Período;3;5.05;dado;;movimento;890
+DMPL;5.05.02;Outros Resultados Abrangentes;3;5.05;dado;;movimento;900
+DMPL;5.06;Mutações Internas do Patrimônio Líquido;2;;grupo;;movimento;910
+DMPL;5.06.01;Constituição de Reservas;3;5.06;dado;;movimento;920
+DMPL;5.06.02;Dividendo Adicional Proposto;3;5.06;dado;;movimento;930
+DMPL;5.07;Saldos Finais;2;;formula;5.03 + 5.04 + 5.05 + 5.06;movimento;940
+DFC;6.01;Caixa Líquido Atividades Operacionais;2;;grupo;;movimento;950
+DFC;6.01.01;Caixa Gerado nas Operações;3;6.01;grupo;;movimento;960
+DFC;6.01.01.01;Lucro Líquido do Período;4;6.01.01;dado;;movimento;970
+DFC;6.01.01.02;Depreciação e Amortização;4;6.01.01;dado;;movimento;980
+DFC;6.01.01.03;Perda de Crédito Esperada;4;6.01.01;dado;;movimento;990
+DFC;6.01.01.04;Provisão (Reversão) para Perdas em Estoques;4;6.01.01;dado;;movimento;1000
+DFC;6.01.01.05;Resultado na Alienação de Imobilizado;4;6.01.01;dado;;movimento;1010
+DFC;6.01.01.06;Imposto de Renda e Contribuição Social;4;6.01.01;dado;;movimento;1020
+DFC;6.01.01.07;Juros sobre Empréstimos e Financiamentos;4;6.01.01;dado;;movimento;1030
+DFC;6.01.02;Variações nos Ativos e Passivos;3;6.01;grupo;;movimento;1040
+DFC;6.01.02.01;Contas a Receber;4;6.01.02;dado;;movimento;1050
+DFC;6.01.02.02;Estoques;4;6.01.02;dado;;movimento;1060
+DFC;6.01.02.03;Tributos a Recuperar;4;6.01.02;dado;;movimento;1070
+DFC;6.01.02.04;Outros Ativos;4;6.01.02;dado;;movimento;1080
+DFC;6.01.02.05;Fornecedores;4;6.01.02;dado;;movimento;1090
+DFC;6.01.02.06;Obrigações Sociais e Trabalhistas;4;6.01.02;dado;;movimento;1100
+DFC;6.01.02.07;Obrigações Fiscais;4;6.01.02;dado;;movimento;1110
+DFC;6.01.02.08;Adiantamentos de Clientes;4;6.01.02;dado;;movimento;1120
+DFC;6.01.02.09;Outros Passivos;4;6.01.02;dado;;movimento;1130
+DFC;6.01.03;Outros;3;6.01;grupo;;movimento;1140
+DFC;6.01.03.01;Imposto de Renda e Contribuição Social Pagos;4;6.01.03;dado;;movimento;1150
+DFC;6.02;Caixa Líquido Atividades de Investimento;2;;grupo;;movimento;1160
+DFC;6.02.01;Aquisições de Imobilizado;3;6.02;dado;;movimento;1170
+DFC;6.02.02;Recebimento pela Venda de Imobilizado;3;6.02;dado;;movimento;1180
+DFC;6.02.03;Adições ao Intangível;3;6.02;dado;;movimento;1190
+DFC;6.03;Caixa Líquido Atividades de Financiamento;2;;grupo;;movimento;1200
+DFC;6.03.01;Captação de Empréstimos e Financiamentos;3;6.03;dado;;movimento;1210
+DFC;6.03.02;Amortização de Empréstimos e Financiamentos;3;6.03;dado;;movimento;1220
+DFC;6.03.03;Juros Pagos;3;6.03;dado;;movimento;1230
+DFC;6.03.04;Aumento de Capital;3;6.03;dado;;movimento;1240
+DFC;6.03.05;Dividendos Pagos;3;6.03;dado;;movimento;1250
+DFC;6.05;Aumento (Redução) de Caixa e Equivalentes;2;;formula;6.01 + 6.02 + 6.03;movimento;1260
+DFC;6.05.01;Saldo Inicial de Caixa e Equivalentes;3;6.05;dado;;posicao;1270
+DFC;6.05.02;Saldo Final de Caixa e Equivalentes;3;6.05;formula;6.05.01 + 6.05;posicao;1280
+DVA;7.01;Receitas;2;;grupo;;movimento;1290
+DVA;7.01.01;Vendas de Mercadorias, Produtos e Serviços;3;7.01;dado;;movimento;1300
+DVA;7.01.02;Outras Receitas;3;7.01;dado;;movimento;1310
+DVA;7.01.04;Provisão/Reversão de Créds. Liquidação Duvidosa;3;7.01;dado;;movimento;1320
+DVA;7.02;Insumos Adquiridos de Terceiros;2;;grupo;;movimento;1330
+DVA;7.02.01;Custos Prods., Mercs. e Servs. Vendidos;3;7.02;dado;;movimento;1340
+DVA;7.02.02;Materiais, Energia, Servs. de Terceiros e Outros;3;7.02;dado;;movimento;1350
+DVA;7.02.03;Perda/Recuperação de Valores Ativos;3;7.02;dado;;movimento;1360
+DVA;7.03;Valor Adicionado Bruto;2;;formula;7.01 + 7.02;movimento;1370
+DVA;7.04;Retenções;2;;grupo;;movimento;1380
+DVA;7.04.01;Depreciação, Amortização e Exaustão;3;7.04;dado;;movimento;1390
+DVA;7.05;Valor Adicionado Líquido Produzido;2;;formula;7.03 + 7.04;movimento;1400
+DVA;7.06;Vlr Adicionado Recebido em Transferência;2;;grupo;;movimento;1410
+DVA;7.06.02;Receitas Financeiras;3;7.06;dado;;movimento;1420
+DVA;7.07;Valor Adicionado Total a Distribuir;2;;formula;7.05 + 7.06;movimento;1430
+DVA;7.08;Distribuição do Valor Adicionado;2;;grupo;;movimento;1440
+DVA;7.08.01;Pessoal;3;7.08;grupo;;movimento;1450
+DVA;7.08.01.01;Remuneração Direta;4;7.08.01;dado;;movimento;1460
+DVA;7.08.01.02;Benefícios;4;7.08.01;dado;;movimento;1470
+DVA;7.08.01.03;F.G.T.S.;4;7.08.01;dado;;movimento;1480
+DVA;7.08.02;Impostos, Taxas e Contribuições;3;7.08;grupo;;movimento;1490
+DVA;7.08.02.01;Federais;4;7.08.02;dado;;movimento;1500
+DVA;7.08.02.02;Estaduais;4;7.08.02;dado;;movimento;1510
+DVA;7.08.02.03;Municipais;4;7.08.02;dado;;movimento;1520
+DVA;7.08.03;Remuneração de Capitais de Terceiros;3;7.08;grupo;;movimento;1530
+DVA;7.08.03.01;Juros;4;7.08.03;dado;;movimento;1540
+DVA;7.08.03.02;Aluguéis;4;7.08.03;dado;;movimento;1550
+DVA;7.08.03.03;Outras;4;7.08.03;dado;;movimento;1560
+DVA;7.08.04;Remuneração de Capitais Próprios;3;7.08;grupo;;movimento;1570
+DVA;7.08.04.02;Dividendos;4;7.08.04;dado;;movimento;1580
+DVA;7.08.04.03;Lucros Retidos / Prejuízo do Período;4;7.08.04;dado;;movimento;1590

@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Gerados pelo sistema (podem ser recriados a qualquer momento)
+base/*.sqlite
+saidas/**/*.xlsx
+saidas/**/*.pdf
+exportacao/*.parquet
+config/plano_de_contas_e_mapeamentos.xlsx
+
+# Arquivos temporários do Excel e do Windows
+~$*
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/

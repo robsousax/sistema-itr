@@ -1,0 +1,73 @@
+# Cadastro e parâmetros da companhia fictícia.
+# Tudo o que é "regra de negócio" e pode mudar fica aqui, e não escrito dentro do código.
+
+empresa:
+  razao_social: "Orbe Suprimentos S.A."
+  nome_curto: "Orbe"
+  cnpj: "99.999.999/0001-99"          # fictício
+  sede: "Duque de Caxias - RJ"
+  atividade: >-
+    Distribuição B2B (atacado) de suprimentos empresariais: material de escritório,
+    produtos de limpeza e higiene, equipamentos de proteção individual (EPI)
+    e suprimentos de informática.
+  situacao_cvm: "Companhia aberta categoria A (simulada)"
+  controladas: false                   # V1: sem consolidação
+  segmentos_operacionais: 1            # segmento único: distribuição
+  exercicio_social: "01/01 a 31/12"
+  moeda_funcional: "BRL"
+  apresentacao: "R$ mil"               # valores gravados em centavos, arredondados só na saída
+
+periodos:
+  saldos_de_abertura: "2024-12-31"
+  inicio_movimento: "2025-01-01"
+  fim_movimento: "2026-09-30"
+  itr_principal: "3T26"
+
+capital:
+  capital_social_rs: 30000000.00
+  acoes_ordinarias: 30000000           # 1 ação = R$ 1,00 de capital
+  acoes_preferenciais: 0
+  acoes_em_tesouraria: 0
+  instrumentos_diluidores: false       # LPA diluído = LPA básico
+
+dividendos_e_reservas:
+  dividendo_minimo_obrigatorio: 0.25   # sobre o lucro líquido ajustado (art. 202, Lei 6.404)
+  reserva_legal: 0.05                  # do lucro líquido (art. 193)
+  limite_reserva_legal: 0.20           # do capital social
+  saldo_remanescente: "Reserva de retenção de lucros (orçamento de capital)"
+  juros_sobre_capital_proprio: false   # V1: não utiliza JCP
+
+tributacao:
+  regime: "Lucro Real trimestral"
+  irpj_aliquota: 0.15
+  irpj_adicional_aliquota: 0.10
+  irpj_adicional_limite_trimestral_rs: 60000.00
+  csll_aliquota: 0.09
+  pis_nao_cumulativo: 0.0165
+  cofins_nao_cumulativo: 0.076
+  icms_aliquota_unica_simplificada: 0.18   # simplificação: ver docs/01, seção Limitações
+  creditos_pis_cofins: "Somente sobre aquisição de mercadorias para revenda"
+
+politicas:
+  estoques_metodo_custo: "Custo médio ponderado móvel"
+  receita_reconhecimento: "Na entrega ao cliente (transferência de controle em um ponto no tempo)"
+  prazo_medio_recebimento_dias_referencia: 45
+  prazo_medio_pagamento_dias_referencia: 60
+  matriz_perda_esperada:               # % sobre o saldo de cada faixa de vencimento
+    a_vencer: 0.005
+    vencido_1_a_30: 0.02
+    vencido_31_a_90: 0.10
+    vencido_91_a_180: 0.40
+    vencido_acima_180: 1.00
+  vida_util_anos:                      # depreciação linear, sem valor residual
+    edificacoes: 25
+    maquinas_e_equipamentos: 10
+    veiculos: 5
+    moveis_e_utensilios: 10
+    equipamentos_de_informatica: 5
+    softwares: 5
+  dfc_metodo: "Indireto"
+  dfc_juros_pagos: "Atividades de financiamento"
+  dfc_juros_recebidos: "Atividades operacionais"
+  dfc_dividendos_pagos: "Atividades de financiamento"
+  dfc_ir_cs_pagos: "Atividades operacionais"

@@ -1,0 +1,166 @@
+﻿codigo;descricao;tipo;natureza;nivel;codigo_pai;grupo;redutora
+1;ATIVO;S;D;1;;ativo;N
+1.1;ATIVO CIRCULANTE;S;D;2;1;ativo;N
+1.1.01;Caixa e equivalentes de caixa;S;D;3;1.1;ativo;N
+1.1.01.001;Caixa geral;A;D;4;1.1.01;ativo;N
+1.1.01.002;Bancos conta movimento;A;D;4;1.1.01;ativo;N
+1.1.01.003;Aplicações financeiras de liquidez imediata (CDB DI);A;D;4;1.1.01;ativo;N
+1.1.02;Contas a receber;S;D;3;1.1;ativo;N
+1.1.02.001;Clientes - mercado interno;A;D;4;1.1.02;ativo;N
+1.1.02.009;(-) Perda esperada com créditos de liquidação duvidosa;A;C;4;1.1.02;ativo;S
+1.1.03;Estoques;S;D;3;1.1;ativo;N
+1.1.03.001;Mercadorias para revenda;A;D;4;1.1.03;ativo;N
+1.1.03.002;Mercadorias em trânsito;A;D;4;1.1.03;ativo;N
+1.1.03.009;(-) Provisão para perdas em estoques;A;C;4;1.1.03;ativo;S
+1.1.04;Tributos a recuperar;S;D;3;1.1;ativo;N
+1.1.04.001;ICMS a recuperar;A;D;4;1.1.04;ativo;N
+1.1.04.002;PIS a recuperar;A;D;4;1.1.04;ativo;N
+1.1.04.003;COFINS a recuperar;A;D;4;1.1.04;ativo;N
+1.1.04.004;IRPJ a compensar (antecipações e saldo negativo);A;D;4;1.1.04;ativo;N
+1.1.04.005;CSLL a compensar (antecipações e saldo negativo);A;D;4;1.1.04;ativo;N
+1.1.04.006;IRRF sobre aplicações financeiras;A;D;4;1.1.04;ativo;N
+1.1.05;Despesas antecipadas;S;D;3;1.1;ativo;N
+1.1.05.001;Seguros a apropriar;A;D;4;1.1.05;ativo;N
+1.1.05.002;Assinaturas e licenças a apropriar;A;D;4;1.1.05;ativo;N
+1.1.06;Outros ativos circulantes;S;D;3;1.1;ativo;N
+1.1.06.001;Adiantamentos a fornecedores;A;D;4;1.1.06;ativo;N
+1.1.06.002;Adiantamentos a empregados;A;D;4;1.1.06;ativo;N
+1.2;ATIVO NÃO CIRCULANTE;S;D;2;1;ativo;N
+1.2.01;Realizável a longo prazo;S;D;3;1.2;ativo;N
+1.2.01.001;IRPJ diferido ativo;A;D;4;1.2.01;ativo;N
+1.2.01.002;CSLL diferida ativa;A;D;4;1.2.01;ativo;N
+1.2.02;Imobilizado;S;D;3;1.2;ativo;N
+1.2.02.001;Terrenos;A;D;4;1.2.02;ativo;N
+1.2.02.002;Edificações (centro de distribuição);A;D;4;1.2.02;ativo;N
+1.2.02.003;Máquinas e equipamentos;A;D;4;1.2.02;ativo;N
+1.2.02.004;Veículos;A;D;4;1.2.02;ativo;N
+1.2.02.005;Móveis e utensílios;A;D;4;1.2.02;ativo;N
+1.2.02.006;Equipamentos de informática;A;D;4;1.2.02;ativo;N
+1.2.02.007;Imobilizado em andamento;A;D;4;1.2.02;ativo;N
+1.2.02.092;(-) Depreciação acumulada - edificações;A;C;4;1.2.02;ativo;S
+1.2.02.093;(-) Depreciação acumulada - máquinas e equipamentos;A;C;4;1.2.02;ativo;S
+1.2.02.094;(-) Depreciação acumulada - veículos;A;C;4;1.2.02;ativo;S
+1.2.02.095;(-) Depreciação acumulada - móveis e utensílios;A;C;4;1.2.02;ativo;S
+1.2.02.096;(-) Depreciação acumulada - equipamentos de informática;A;C;4;1.2.02;ativo;S
+1.2.03;Intangível;S;D;3;1.2;ativo;N
+1.2.03.001;Softwares e licenças de uso;A;D;4;1.2.03;ativo;N
+1.2.03.091;(-) Amortização acumulada - softwares;A;C;4;1.2.03;ativo;S
+2;PASSIVO E PATRIMÔNIO LÍQUIDO;S;C;1;;passivo;N
+2.1;PASSIVO CIRCULANTE;S;C;2;2;passivo;N
+2.1.01;Obrigações sociais e trabalhistas;S;C;3;2.1;passivo;N
+2.1.01.001;Salários a pagar;A;C;4;2.1.01;passivo;N
+2.1.01.002;INSS a recolher;A;C;4;2.1.01;passivo;N
+2.1.01.003;FGTS a recolher;A;C;4;2.1.01;passivo;N
+2.1.01.004;Provisão de férias e encargos;A;C;4;2.1.01;passivo;N
+2.1.01.005;Provisão de 13º salário e encargos;A;C;4;2.1.01;passivo;N
+2.1.01.006;Participação nos lucros a pagar (PLR);A;C;4;2.1.01;passivo;N
+2.1.02;Fornecedores;S;C;3;2.1;passivo;N
+2.1.02.001;Fornecedores de mercadorias;A;C;4;2.1.02;passivo;N
+2.1.02.002;Fornecedores de serviços e despesas gerais;A;C;4;2.1.02;passivo;N
+2.1.02.003;Fornecedores de imobilizado;A;C;4;2.1.02;passivo;N
+2.1.03;Obrigações fiscais;S;C;3;2.1;passivo;N
+2.1.03.001;ICMS a recolher;A;C;4;2.1.03;passivo;N
+2.1.03.002;PIS a recolher;A;C;4;2.1.03;passivo;N
+2.1.03.003;COFINS a recolher;A;C;4;2.1.03;passivo;N
+2.1.03.004;IRRF a recolher (salários e terceiros);A;C;4;2.1.03;passivo;N
+2.1.03.005;ISS retido a recolher;A;C;4;2.1.03;passivo;N
+2.1.03.006;IRPJ a pagar;A;C;4;2.1.03;passivo;N
+2.1.03.007;CSLL a pagar;A;C;4;2.1.03;passivo;N
+2.1.04;Empréstimos e financiamentos;S;C;3;2.1;passivo;N
+2.1.04.001;FINAME - parcela de curto prazo;A;C;4;2.1.04;passivo;N
+2.1.04.002;Capital de giro (CCB) - parcela de curto prazo;A;C;4;2.1.04;passivo;N
+2.1.05;Outras obrigações;S;C;3;2.1;passivo;N
+2.1.05.001;Dividendos a pagar;A;C;4;2.1.05;passivo;N
+2.1.05.002;Adiantamentos de clientes (passivo de contrato);A;C;4;2.1.05;passivo;N
+2.1.05.003;Outras contas a pagar;A;C;4;2.1.05;passivo;N
+2.2;PASSIVO NÃO CIRCULANTE;S;C;2;2;passivo;N
+2.2.01;Empréstimos e financiamentos;S;C;3;2.2;passivo;N
+2.2.01.001;FINAME - parcela de longo prazo;A;C;4;2.2.01;passivo;N
+2.2.01.002;Capital de giro (CCB) - parcela de longo prazo;A;C;4;2.2.01;passivo;N
+2.2.02;Tributos diferidos;S;C;3;2.2;passivo;N
+2.2.02.001;IRPJ diferido passivo;A;C;4;2.2.02;passivo;N
+2.2.02.002;CSLL diferida passiva;A;C;4;2.2.02;passivo;N
+2.3;PATRIMÔNIO LÍQUIDO;S;C;2;2;pl;N
+2.3.01;Capital social;S;C;3;2.3;pl;N
+2.3.01.001;Capital social subscrito;A;C;4;2.3.01;pl;N
+2.3.01.002;(-) Capital a integralizar;A;D;4;2.3.01;pl;S
+2.3.02;Reservas de lucros;S;C;3;2.3;pl;N
+2.3.02.001;Reserva legal;A;C;4;2.3.02;pl;N
+2.3.02.002;Reserva de retenção de lucros;A;C;4;2.3.02;pl;N
+2.3.02.003;Dividendo adicional proposto;A;C;4;2.3.02;pl;N
+2.3.03;Lucros ou prejuízos acumulados;S;C;3;2.3;pl;N
+2.3.03.001;Lucros ou prejuízos acumulados;A;C;4;2.3.03;pl;N
+2.3.04;Outros resultados abrangentes;S;C;3;2.3;pl;N
+2.3.04.001;Outros resultados abrangentes;A;C;4;2.3.04;pl;N
+3;CONTAS DE RESULTADO;S;C;1;;resultado;N
+3.1;RECEITA OPERACIONAL LÍQUIDA;S;C;2;3;resultado;N
+3.1.01;Receita bruta de vendas;S;C;3;3.1;resultado;N
+3.1.01.001;Venda de mercadorias - mercado interno;A;C;4;3.1.01;resultado;N
+3.1.02;(-) Deduções da receita bruta;S;D;3;3.1;resultado;N
+3.1.02.001;(-) ICMS sobre vendas;A;D;4;3.1.02;resultado;S
+3.1.02.002;(-) PIS sobre vendas;A;D;4;3.1.02;resultado;S
+3.1.02.003;(-) COFINS sobre vendas;A;D;4;3.1.02;resultado;S
+3.1.02.004;(-) Devoluções de vendas;A;D;4;3.1.02;resultado;S
+3.1.02.005;(-) Descontos comerciais e abatimentos;A;D;4;3.1.02;resultado;S
+3.2;CUSTO DAS MERCADORIAS VENDIDAS;S;D;2;3;resultado;N
+3.2.01;Custo das mercadorias vendidas;S;D;3;3.2;resultado;N
+3.2.01.001;Custo das mercadorias vendidas;A;D;4;3.2.01;resultado;N
+3.2.01.002;Perdas com estoques (obsolescência, avarias e validade);A;D;4;3.2.01;resultado;N
+3.3;DESPESAS E RECEITAS OPERACIONAIS;S;D;2;3;resultado;N
+3.3.01;Despesas com vendas;S;D;3;3.3;resultado;N
+3.3.01.001;Salários e ordenados - comercial;A;D;4;3.3.01;resultado;N
+3.3.01.002;Comissões sobre vendas;A;D;4;3.3.01;resultado;N
+3.3.01.003;Benefícios - comercial;A;D;4;3.3.01;resultado;N
+3.3.01.004;INSS patronal - comercial;A;D;4;3.3.01;resultado;N
+3.3.01.005;FGTS - comercial;A;D;4;3.3.01;resultado;N
+3.3.01.006;Férias e 13º salário - comercial;A;D;4;3.3.01;resultado;N
+3.3.01.007;Fretes sobre vendas;A;D;4;3.3.01;resultado;N
+3.3.01.008;Marketing e publicidade;A;D;4;3.3.01;resultado;N
+3.3.01.009;Combustível e manutenção de frota;A;D;4;3.3.01;resultado;N
+3.3.01.010;Depreciação - comercial e logística;A;D;4;3.3.01;resultado;N
+3.3.01.011;Aluguel de showroom (contrato de curto prazo);A;D;4;3.3.01;resultado;N
+3.3.02;Despesas gerais e administrativas;S;D;3;3.3;resultado;N
+3.3.02.001;Salários e ordenados - administrativo;A;D;4;3.3.02;resultado;N
+3.3.02.002;Benefícios - administrativo;A;D;4;3.3.02;resultado;N
+3.3.02.003;INSS patronal - administrativo;A;D;4;3.3.02;resultado;N
+3.3.02.004;FGTS - administrativo;A;D;4;3.3.02;resultado;N
+3.3.02.005;Férias e 13º salário - administrativo;A;D;4;3.3.02;resultado;N
+3.3.02.006;Participação nos lucros (PLR);A;D;4;3.3.02;resultado;N
+3.3.02.007;Honorários da administração;A;D;4;3.3.02;resultado;N
+3.3.02.008;Energia elétrica e água;A;D;4;3.3.02;resultado;N
+3.3.02.009;Telecomunicações e internet;A;D;4;3.3.02;resultado;N
+3.3.02.010;Serviços de terceiros (jurídico, consultoria);A;D;4;3.3.02;resultado;N
+3.3.02.011;Auditoria independente;A;D;4;3.3.02;resultado;N
+3.3.02.012;Seguros;A;D;4;3.3.02;resultado;N
+3.3.02.013;Manutenção predial;A;D;4;3.3.02;resultado;N
+3.3.02.014;Assinaturas de software (SaaS);A;D;4;3.3.02;resultado;N
+3.3.02.015;Material de escritório e consumo;A;D;4;3.3.02;resultado;N
+3.3.02.016;IPTU e taxas municipais;A;D;4;3.3.02;resultado;N
+3.3.02.017;Depreciação - administrativo;A;D;4;3.3.02;resultado;N
+3.3.02.018;Amortização de intangível;A;D;4;3.3.02;resultado;N
+3.3.03;Perdas pela não recuperabilidade de ativos;S;D;3;3.3;resultado;N
+3.3.03.001;Perda esperada com créditos (constituição e reversão);A;D;4;3.3.03;resultado;N
+3.3.04;Outras receitas operacionais;S;C;3;3.3;resultado;N
+3.3.04.001;Ganho na alienação de imobilizado;A;C;4;3.3.04;resultado;N
+3.3.04.002;Recuperação de despesas;A;C;4;3.3.04;resultado;N
+3.3.05;Outras despesas operacionais;S;D;3;3.3;resultado;N
+3.3.05.001;Perda na alienação de imobilizado;A;D;4;3.3.05;resultado;N
+3.3.05.002;Outras despesas operacionais;A;D;4;3.3.05;resultado;N
+3.4;RESULTADO FINANCEIRO;S;C;2;3;resultado;N
+3.4.01;Receitas financeiras;S;C;3;3.4;resultado;N
+3.4.01.001;Rendimentos de aplicações financeiras;A;C;4;3.4.01;resultado;N
+3.4.01.002;Juros e multas recebidos de clientes;A;C;4;3.4.01;resultado;N
+3.4.01.003;Descontos obtidos;A;C;4;3.4.01;resultado;N
+3.4.02;Despesas financeiras;S;D;3;3.4;resultado;N
+3.4.02.001;Juros sobre empréstimos e financiamentos;A;D;4;3.4.02;resultado;N
+3.4.02.002;Tarifas bancárias;A;D;4;3.4.02;resultado;N
+3.4.02.003;IOF;A;D;4;3.4.02;resultado;N
+3.4.02.004;Descontos concedidos;A;D;4;3.4.02;resultado;N
+3.4.02.005;Juros e multas por atraso;A;D;4;3.4.02;resultado;N
+3.5;TRIBUTOS SOBRE O LUCRO;S;D;2;3;resultado;N
+3.5.01;Corrente;S;D;3;3.5;resultado;N
+3.5.01.001;IRPJ corrente;A;D;4;3.5.01;resultado;N
+3.5.01.002;CSLL corrente;A;D;4;3.5.01;resultado;N
+3.5.02;Diferido;S;D;3;3.5;resultado;N
+3.5.02.001;IRPJ diferido;A;D;4;3.5.02;resultado;N
+3.5.02.002;CSLL diferida;A;D;4;3.5.02;resultado;N

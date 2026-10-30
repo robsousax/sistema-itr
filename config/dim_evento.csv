@@ -1,0 +1,60 @@
+﻿codigo;nome;grupo;contas_debito;contas_credito;descricao
+EV00;Saldo de abertura;abertura;;;Saldos em 31/12/2024. Não é movimento do período.
+EV01;Venda de mercadorias;operacional;1.1.02.001;3.1.01.001;Faturamento na entrega (CPC 47).
+EV02;Tributos sobre a venda;operacional;3.1.02.001,3.1.02.002,3.1.02.003;2.1.03.001,2.1.03.002,2.1.03.003;ICMS, PIS e COFINS destacados na nota de venda.
+EV03;Desconto comercial concedido;operacional;3.1.02.005;1.1.02.001;Abatimento concedido após a venda.
+EV04;Devolução de venda;operacional;3.1.02.004,2.1.03.001,2.1.03.002,2.1.03.003,1.1.03.001;1.1.02.001,3.1.02.001,3.1.02.002,3.1.02.003,3.2.01.001;"Estorna receita, tributos e custo; mercadoria volta ao estoque."
+EV05;Recebimento de cliente;operacional;1.1.01.002;1.1.02.001;
+EV06;Adiantamento recebido de cliente;operacional;1.1.01.002;2.1.05.002;Passivo de contrato até a entrega.
+EV07;Aplicação do adiantamento na venda;operacional;2.1.05.002;1.1.02.001;
+EV08;Juros e multa recebidos de cliente;operacional;1.1.01.002;3.4.01.002;Juros recebidos = operacional (política 3.15).
+EV09;Compra de mercadorias;operacional;1.1.03.001,1.1.03.002,1.1.04.001,1.1.04.002,1.1.04.003;2.1.02.001;Estoque pelo valor líquido dos tributos recuperáveis.
+EV10;Custo da mercadoria vendida;operacional;3.2.01.001;1.1.03.001;Baixa pelo custo médio ponderado móvel.
+EV11;Pagamento a fornecedor;operacional;2.1.02.001,2.1.02.002;1.1.01.002,3.4.01.003;
+EV12;Adiantamento a fornecedor;operacional;1.1.06.001;1.1.01.002;
+EV13;Apuração dos tributos indiretos;operacional;2.1.03.001,2.1.03.002,2.1.03.003;1.1.04.001,1.1.04.002,1.1.04.003;Compensa créditos com débitos. Não afeta caixa.
+EV14;Recolhimento de tributos indiretos e retidos;operacional;2.1.03.001,2.1.03.002,2.1.03.003,2.1.03.004,2.1.03.005,2.1.01.002,2.1.01.003;1.1.01.002;
+EV15;Apropriação da folha;operacional;3.3.01.001,3.3.01.002,3.3.01.003,3.3.01.004,3.3.01.005,3.3.02.001,3.3.02.002,3.3.02.003,3.3.02.004,3.3.02.007;2.1.01.001,2.1.01.002,2.1.01.003,2.1.03.004;
+EV16;Pagamento da folha;operacional;2.1.01.001;1.1.01.002;
+EV17;Provisão de férias e 13º;operacional;3.3.01.006,3.3.02.005;2.1.01.004,2.1.01.005;
+EV18;Pagamento de férias e 13º;operacional;2.1.01.004,2.1.01.005;1.1.01.002;
+EV19;Provisão de PLR;operacional;3.3.02.006;2.1.01.006;
+EV20;Pagamento de PLR;operacional;2.1.01.006;1.1.01.002;
+EV21;Despesa com serviços e consumo;operacional;3.3.01.007,3.3.01.008,3.3.01.009,3.3.01.011,3.3.02.008,3.3.02.009,3.3.02.010,3.3.02.011,3.3.02.013,3.3.02.014,3.3.02.015,3.3.02.016,3.3.05.002;2.1.02.002,2.1.05.003,2.1.03.004,2.1.03.005;
+EV22;Pagamento antecipado de despesa;operacional;1.1.05.001,1.1.05.002;1.1.01.002;Seguros e licenças anuais.
+EV23;Apropriação de despesa antecipada;operacional;3.3.02.012,3.3.02.014;1.1.05.001,1.1.05.002;
+EV24;Tarifas bancárias e IOF;operacional;3.4.02.002,3.4.02.003,3.4.02.004,3.4.02.005;1.1.01.002;
+EV25;Recuperação de despesas;operacional;1.1.01.002;3.3.04.002;
+EV26;Perda esperada - constituição ou reversão;sem_caixa;3.3.03.001;1.1.02.009;Reversão = lançamento inverso. Todo incobrável passa pela provisão antes da baixa (EV27).
+EV27;Baixa de crédito incobrável;sem_caixa;1.1.02.009;1.1.02.001;"Não afeta caixa nem resultado; fica fora da variação de Contas a Receber."
+EV28;Provisão para perdas em estoques;sem_caixa;3.2.01.002;1.1.03.009;Toda perda de estoque passa pela provisão (EV28 e depois EV29). Lançar a perda direto contra o estoque faria a DFC contar o valor duas vezes: no ajuste e na variação de estoques.
+EV29;Baixa de estoque perdido;sem_caixa;1.1.03.009;1.1.03.001;"Consome a provisão; fica fora da variação de Estoques."
+EV30;Aplicação ou resgate em CDB;interno_caixa;1.1.01.003,1.1.01.002;1.1.01.002,1.1.01.003;Movimento entre contas de caixa e equivalentes: não aparece na DFC.
+EV31;Rendimento de aplicação financeira;operacional;1.1.01.003;3.4.01.001;Juros recebidos = operacional.
+EV32;IRRF retido na aplicação;operacional;1.1.04.006;1.1.01.003;Retenção na fonte tratada como IR pago.
+EV33;IRPJ e CSLL correntes;sem_caixa;3.5.01.001,3.5.01.002;2.1.03.006,2.1.03.007;
+EV34;IRPJ e CSLL diferidos;sem_caixa;1.2.01.001,1.2.01.002,3.5.02.001,3.5.02.002;3.5.02.001,3.5.02.002,1.2.01.001,1.2.01.002;Constituição ou realização do ativo fiscal diferido.
+EV35;Compensação de IR com antecipações e retenções;sem_caixa;2.1.03.006,2.1.03.007;1.1.04.004,1.1.04.005,1.1.04.006;
+EV36;Pagamento de IRPJ e CSLL;operacional;2.1.03.006,2.1.03.007,1.1.04.004,1.1.04.005;1.1.01.002;
+EV37;Captação de empréstimo;financiamento;1.1.01.002;2.1.04.002,2.2.01.002;
+EV38;Juros apropriados sobre empréstimos;sem_caixa;3.4.02.001;2.1.04.001,2.1.04.002;"Competência; volta como ajuste (6.01.01.07)."
+EV39;Pagamento de juros;financiamento;2.1.04.001,2.1.04.002;1.1.01.002;
+EV40;Amortização de principal;financiamento;2.1.04.001,2.1.04.002;1.1.01.002;
+EV41;Transferência do longo para o curto prazo;sem_caixa;2.2.01.001,2.2.01.002;2.1.04.001,2.1.04.002;Reclassificação: não afeta caixa.
+EV42;Compra de imobilizado à vista;investimento;1.2.02.003,1.2.02.004,1.2.02.005,1.2.02.006,1.2.02.007;1.1.01.002;
+EV43;Compra de imobilizado a prazo;sem_caixa;1.2.02.003,1.2.02.004,1.2.02.005,1.2.02.006,1.2.02.007;2.1.02.003;Transação sem caixa: divulgar (CPC 03, item 43).
+EV44;Pagamento a fornecedor de imobilizado;investimento;2.1.02.003;1.1.01.002;
+EV45;Compra de imobilizado via FINAME;sem_caixa;1.2.02.003,1.2.02.004;2.1.04.001,2.2.01.001;Banco paga direto ao fornecedor: transação sem caixa, divulgar.
+EV46;Conclusão de imobilizado em andamento;sem_caixa;1.2.02.002,1.2.02.003;1.2.02.007;
+EV47;Depreciação;sem_caixa;3.3.01.010,3.3.02.017;1.2.02.092,1.2.02.093,1.2.02.094,1.2.02.095,1.2.02.096;
+EV48;Amortização de intangível;sem_caixa;3.3.02.018;1.2.03.091;
+EV49;Venda de imobilizado;investimento;1.1.01.002,1.2.02.093,1.2.02.094,3.3.05.001;1.2.02.003,1.2.02.004,3.3.04.001;Ganho ou perda volta como ajuste (6.01.01.05).
+EV50;Aquisição de intangível;investimento;1.2.03.001;1.1.01.002;
+EV51;Integralização de capital;patrimonio;2.3.01.002,1.1.01.002;2.3.01.001,2.3.01.002;
+EV52;Encerramento do resultado do exercício;encerramento;TODAS_RESULTADO,2.3.03.001;TODAS_RESULTADO,2.3.03.001;Em 31/12 zera as contas de resultado contra lucros acumulados. Na DMPL o lucro vem da DRE (5.05.01).
+EV53;Constituição de reserva legal;patrimonio;2.3.03.001;2.3.02.001;
+EV54;Dividendo mínimo obrigatório;patrimonio;2.3.03.001;2.1.05.001;
+EV55;Dividendo adicional proposto;patrimonio;2.3.03.001;2.3.02.003;Fica no PL até a aprovação em assembleia.
+EV56;Aprovação do dividendo adicional;patrimonio;2.3.02.003;2.1.05.001;Já contado na DVA do exercício em que foi proposto.
+EV57;Pagamento de dividendos;financiamento;2.1.05.001;1.1.01.002;
+EV58;Retenção de lucros;patrimonio;2.3.03.001;2.3.02.002;
