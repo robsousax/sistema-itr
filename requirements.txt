@@ -12,5 +12,5 @@ pypdf>=4.0          # só nos testes: lê o PDF gerado
 # Etapa 11 — exportação Parquet para o Power BI
 pyarrow>=16.0
 
-# Etapa 12 — web (descomentar quando chegar lá)
-# streamlit>=1.36
+# Etapa 12 — painel web
+streamlit>=1.50

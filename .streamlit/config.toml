@@ -1,0 +1,10 @@
+# Aparência do painel web: mesmas cores do PDF do ITR
+[theme]
+base = "light"
+primaryColor = "#1f5f7a"
+textColor = "#1b2733"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#eef2f5"
+
+[browser]
+gatherUsageStats = false
