@@ -2,7 +2,7 @@
 
 Sistema de fechamento trimestral que recebe a contabilidade de uma companhia aberta e entrega as
 Informações Trimestrais (ITR): as sete demonstrações, notas explicativas, comentário de desempenho e
-indicadores, em Excel, PDF, Power BI e um painel web. Antes de qualquer arquivo sair, uma central
+indicadores, em Excel, PDF e um painel web. Antes de qualquer arquivo sair, uma central
 de qualidade confere 20 pontos, e um erro bloqueia a publicação.
 
 A empresa é fictícia: **Orbe Suprimentos S.A.**, distribuidora B2B de suprimentos empresariais,
@@ -34,8 +34,8 @@ terminou setembro com caixa líquido de R$ 13 milhões (mais caixa do que dívid
 
 ```
 Excel de entrada ─► validação ─► base SQLite ─► motor contábil ─► Central de qualidade ─┬─► ITR em Excel e PDF
-(lançamentos,      (débito =     (razão,        (BP, DRE, DRA,     (20 verificações;     ├─► Parquet ─► Power BI
- abertura,          crédito,      cadastros)     DFC, DMPL, DVA,    erro bloqueia)        └─► Parquet ─► painel web
+(lançamentos,      (débito =     (razão,        (BP, DRE, DRA,     (20 verificações;     ├─► Parquet ─► painel web (Streamlit)
+ abertura,          crédito,      cadastros)     DFC, DMPL, DVA,    erro bloqueia)        └─► Parquet ─► modelo para Power BI
  cadastros)         contas,                      notas,
                     datas)                       indicadores)
 ```
@@ -69,23 +69,23 @@ As políticas contábeis e as simplificações estão em `docs/01_empresa_e_poli
   saldos contrários à natureza. Conciliação: Ativo = Passivo + PL, DFC indireta = direta, DMPL = PL do
   BP, notas = demonstrações, EBITDA pelos dois caminhos. Erro bloqueia; alerta fica registrado. Cada
   execução fica gravada com data, hora e resultado.
-- **Conferências por fórmula** no Excel e **conferências na tela** no Power BI e no painel web. Todas
-  devem dar zero.
+- **Conferências por fórmula** no Excel e **conferências na tela** no painel web. Todas devem dar
+  zero.
 - **250 testes automáticos** (`pytest`), incluindo testes de mutação: regras quebradas de propósito
   para confirmar que os testes acusam.
 
-## O painel: Power BI e web
+## O painel
 
-O Python exporta um modelo estrela em Parquet (5 dimensões, 4 fatos). O Power BI e o painel web leem os
-mesmos arquivos e só agregam: não recalculam a contabilidade. Cada linha das demonstrações diz como
-deve ser agregada no tempo. Fluxos somam os trimestres. Saldos de balanço ficam com o último
-trimestre: é a medida semiaditiva, conferida pelos testes contra o 9M26 do ITR.
+O Python exporta um modelo estrela em Parquet (5 dimensões, 4 fatos). O painel web, em Streamlit
+(`app/painel.py`), lê esses arquivos e só agrega: não recalcula a contabilidade. Cada linha das
+demonstrações diz como deve ser agregada no tempo. Fluxos somam os trimestres. Saldos de balanço
+ficam com o último trimestre: é a regra semiaditiva, conferida pelos testes contra o 9M26 do ITR.
 
 ![Painel web: demonstrações com a coluna Período](docs/img/painel_demonstracoes.png)
 
-- Power BI: consultas M e medidas DAX comentadas em `powerbi/`, roteiro de montagem em
-  `docs/11_power_bi.md`.
-- Painel web em Streamlit: `app/painel.py`.
+O mesmo modelo está pronto para o Power BI: as consultas Power Query e as medidas DAX, comentadas,
+ficam em `powerbi/`, e o roteiro para montar o painel está em `docs/11_power_bi.md`. O arquivo .pbix
+não faz parte do repositório.
 
 ## Como rodar (Windows)
 
@@ -101,7 +101,7 @@ python src/gerar_dados.py               # contabilidade da Orbe: entrada/entrada
 python src/importar_entrada.py          # valida e grava base/itr.sqlite
 python src/qualidade.py                 # Central de qualidade
 python src/gerar_itr.py                 # ITR em saidas/3T26/ (Excel, PDF e HTML)
-python src/exportar_parquet.py          # Parquet para o Power BI e o painel web
+python src/exportar_parquet.py          # Parquet para o painel web e o Power BI
 streamlit run app/painel.py             # painel web em http://localhost:8501
 pytest                                  # testes
 ```
@@ -119,7 +119,7 @@ sistema-itr/
 ├── src/          código Python: validação, motor contábil, Central, exportadores
 ├── modelos/      modelo HTML/CSS do PDF
 ├── app/          painel web (Streamlit)
-├── powerbi/      consultas Power Query, medidas DAX e o .pbix
+├── powerbi/      consultas Power Query e medidas DAX para montar o painel no Power BI
 ├── exemplos/     ITR do 3T26 em PDF e Excel, e a exportação Parquet usada pelo painel web
 ├── testes/       testes automáticos
 ├── docs/         uma explicação por etapa, com decisões, regras e limitações
@@ -143,7 +143,7 @@ sistema-itr/
 | `docs/08_indicadores.md` | Fórmulas dos indicadores e reconciliação do EBITDA |
 | `docs/09_central_de_qualidade.md` | As 20 verificações e o registro de cada execução |
 | `docs/10_excel_e_pdf.md` | O ITR em Excel e PDF e o comentário de desempenho |
-| `docs/11_power_bi.md` | Modelo estrela, medidas semiaditivas e montagem do Power BI |
+| `docs/11_power_bi.md` | Modelo estrela, medidas semiaditivas em DAX e roteiro para montar o Power BI |
 | `docs/12_painel_web.md` | Painel em Streamlit e como publicá-lo |
 
 ## Limitações
@@ -160,5 +160,5 @@ sistema-itr/
 Robert Sousa Paiva, contador (UERJ, CRC ativo).
 [LinkedIn](https://www.linkedin.com/in/robertsousapaiva) · [GitHub](https://github.com/robsousax)
 
-Ferramentas: Python (pandas, openpyxl, SQLite, pytest), Jinja2 e Playwright para o PDF, Power BI
-(Power Query e DAX) e Streamlit.
+Ferramentas: Python (pandas, openpyxl, SQLite, pytest), Jinja2 e Playwright para o PDF, Streamlit e
+Altair para o painel web, Parquet com consultas Power Query e medidas DAX para o Power BI.
