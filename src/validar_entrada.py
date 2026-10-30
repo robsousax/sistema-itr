@@ -5,9 +5,12 @@ Nível 1 — integridade: abas e colunas existem, cada célula tem o tipo certo,
           máximo 2 casas decimais, códigos de conta e evento existem, datas dentro do período,
           sem chaves repetidas.
 Nível 2 — coerência contábil: débitos = créditos, conta compatível com o evento e com o lado,
-          e cada quadro auxiliar bate com os saldos de abertura.
+          exercícios encerrados corretamente, e cada quadro auxiliar bate com a contabilidade.
 
 O nível 2 só roda se o nível 1 passar: com dados mal formados as somas não significam nada.
+
+Erro x alerta: ERRO bloqueia a importação. ALERTA não bloqueia, mas pede revisão humana
+(ex.: cliente com saldo credor pode ser adiantamento, pagamento em duplicidade ou erro).
 
 Uso (só valida, não grava):
     python src/validar_entrada.py entrada/entrada_itr.xlsx
@@ -150,6 +153,10 @@ def converter_aba(aba: str, bruto: pd.DataFrame) -> tuple[pd.DataFrame, list[str
                 registro[nome] = 0 if c.tipo in ("valor", "inteiro") else None
                 if c.obrigatoria:
                     erros.append(f"{aba}, linha {n}: coluna '{c.nome}' é obrigatória")
+                    linha_ok = False
+                elif c.obrigatoria_se and c.obrigatoria_se(linha):
+                    erros.append(f"{aba}, linha {n}: coluna '{c.nome}' é obrigatória quando "
+                                 f"{c.quando}")
                     linha_ok = False
                 continue
             try:
@@ -302,6 +309,64 @@ def checar_saldos_abertura(dados, cfg, abertura) -> list[str]:
         if r.codigo_conta == "2.3.03.001" and r.credito_centavos > 0:
             erros.append(f"{local}: lucros acumulados não podem ter saldo credor em 31/12; o "
                          f"lucro precisa estar todo destinado (Lei 6.404, art. 202, § 6º)")
+    return erros
+
+
+def alertas_saldos_abertura(dados, cfg) -> list[str]:
+    """
+    Conta comum (não redutora) com saldo contrário à natureza: ALERTA, não erro.
+    Pode ser legítimo (adiantamento, pagamento em duplicidade, prejuízos acumulados), mas
+    precisa de revisão: às vezes é classificação errada. Redutoras invertidas já são erro.
+    """
+    alertas = []
+    plano = cfg["plano_de_contas"].set_index("codigo")
+    for r in dados["saldos_abertura"].itertuples():
+        conta = plano.loc[r.codigo_conta]
+        if r.codigo_conta.startswith("3") or conta["redutora"] == "S":
+            continue
+        devedor = r.debito_centavos > 0
+        if (conta["natureza"] == "D") != devedor:
+            saldo = rs(r.debito_centavos if devedor else r.credito_centavos)
+            lado = "devedor" if devedor else "credor"
+            alertas.append(f"saldos_abertura, linha {r.linha}, conta {r.codigo_conta} "
+                           f"({conta['descricao']}): saldo {lado} de {saldo}, contrário à natureza "
+                           f"({conta['natureza']}). Confira se é adiantamento, pagamento em "
+                           f"duplicidade ou erro de classificação")
+    return alertas
+
+
+def checar_encerramentos(dados, cfg, inicio: date, fim: date) -> list[str]:
+    """
+    Em cada 31/12 do período já encerrado, confere o fechamento do exercício:
+      1. o EV52 zerou todas as contas de resultado (senão a DRE do ano seguinte já começa
+         contaminada pelo resultado do ano anterior);
+      2. lucros acumulados sem saldo credor depois das destinações (Lei 6.404, art. 202, § 6º).
+
+    O exercício é considerado encerrado quando já há lançamentos do ano seguinte ou quando há
+    um EV52 no próprio 31/12. A contrapartida do EV52 só pode ser lucros acumulados: isso já é
+    garantido pela regra de contas do evento (checar_lancamentos).
+    """
+    erros = []
+    lanc = dados["lancamentos"]
+    resultado = set(cfg["plano_de_contas"].query("tipo == 'A'")["codigo"])
+    resultado = {c for c in resultado if c.startswith("3")}
+    for ano in range(inicio.year, fim.year + 1):
+        fim_ano = date(ano, 12, 31)
+        tem_ano_seguinte = (lanc.data > fim_ano).any()
+        tem_encerramento = ((lanc.data == fim_ano) & (lanc.codigo_evento == "EV52")).any()
+        if not (tem_ano_seguinte or tem_encerramento):
+            continue
+        saldos = saldos_ate(dados, fim_ano)
+        for conta in sorted(resultado):
+            if saldos.get(conta, 0):
+                erros.append(f"encerramento de {fmt(fim_ano)}: conta de resultado {conta} ficou "
+                             f"com saldo {rs(saldos[conta])}; o EV52 precisa zerar todas as contas "
+                             f"de resultado do exercício")
+        lucros = saldos.get("2.3.03.001", 0)
+        if lucros < 0:
+            erros.append(f"encerramento de {fmt(fim_ano)}: lucros acumulados com saldo credor de "
+                         f"{rs(-lucros)} depois das destinações; o lucro precisa estar todo "
+                         f"destinado (Lei 6.404, art. 202, § 6º)")
     return erros
 
 
@@ -476,43 +541,61 @@ def checar_diferencas_temporarias(dados, empresa, abertura) -> list[str]:
     return erros
 
 
-def validar_nivel2(dados: dict[str, pd.DataFrame], cfg: dict, empresa: dict) -> list[str]:
-    abertura, _, _ = periodos(empresa)
+def validar_nivel2(dados: dict[str, pd.DataFrame], cfg: dict, empresa: dict
+                   ) -> tuple[list[str], list[str]]:
+    """Devolve (erros, alertas)."""
+    abertura, inicio, fim = periodos(empresa)
     saldos = saldos_ate(dados, abertura)
-    return (checar_saldos_abertura(dados, cfg, abertura)
-            + checar_lancamentos(dados, cfg)
-            + checar_imobilizado(dados, empresa, saldos, abertura)
-            + checar_emprestimos(dados, saldos, abertura)
-            + checar_patrimonio_liquido(dados, saldos, abertura)
-            + checar_diferencas_temporarias(dados, empresa, abertura))
+    erros = (checar_saldos_abertura(dados, cfg, abertura)
+             + checar_lancamentos(dados, cfg)
+             + checar_encerramentos(dados, cfg, inicio, fim)
+             + checar_imobilizado(dados, empresa, saldos, abertura)
+             + checar_emprestimos(dados, saldos, abertura)
+             + checar_patrimonio_liquido(dados, saldos, abertura)
+             + checar_diferencas_temporarias(dados, empresa, abertura))
+    alertas = alertas_saldos_abertura(dados, cfg)
+    return erros, alertas
 
 
 # ---------------------------------------------------------------- tudo junto
 
-def validar(caminho: Path) -> tuple[dict[str, pd.DataFrame], list[str]]:
-    """Lê e valida o arquivo. Devolve (dados convertidos, erros). Sem erros = pode importar."""
+def validar(caminho: Path) -> tuple[dict[str, pd.DataFrame], list[str], list[str]]:
+    """
+    Lê e valida o arquivo. Devolve (dados convertidos, erros, alertas).
+    Sem erros = pode importar. Alertas não impedem a importação.
+    """
     cfg = carregar()
     empresa = carregar_empresa()
     dados, erros = validar_nivel1(ler_planilha(caminho), cfg, empresa)
     if erros:
-        return dados, [f"[nível 1] {e}" for e in erros]
-    return dados, [f"[nível 2] {e}" for e in validar_nivel2(dados, cfg, empresa)]
+        return dados, [f"[nível 1] {e}" for e in erros], []
+    erros, alertas = validar_nivel2(dados, cfg, empresa)
+    return dados, [f"[nível 2] {e}" for e in erros], [f"[alerta] {a}" for a in alertas]
 
 
 def imprimir_erros(erros: list[str]) -> None:
-    print(f"\n{len(erros)} problema(s) encontrado(s):")
+    print(f"\n{len(erros)} erro(s) encontrado(s), a importação está bloqueada:")
     for e in erros:
         print("  -", e)
+
+
+def imprimir_alertas(alertas: list[str]) -> None:
+    if not alertas:
+        return
+    print(f"\n{len(alertas)} alerta(s) para revisão (não bloqueiam):")
+    for a in alertas:
+        print("  -", a)
 
 
 def main() -> None:
     if len(sys.argv) != 2:
         raise SystemExit("Uso: python src/validar_entrada.py caminho/do/arquivo.xlsx")
-    _, erros = validar(Path(sys.argv[1]))
+    _, erros, alertas = validar(Path(sys.argv[1]))
+    imprimir_alertas(alertas)
     if erros:
         imprimir_erros(erros)
         raise SystemExit(1)
-    print("Entrada OK: níveis 1 e 2 sem problemas.")
+    print("\nEntrada OK: níveis 1 e 2 sem erros.")
 
 
 if __name__ == "__main__":

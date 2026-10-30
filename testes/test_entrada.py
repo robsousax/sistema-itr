@@ -85,7 +85,8 @@ def dados_validos() -> dict[str, list[dict]]:
             {"id_contrato": "E001", "modalidade": "FINAME", "credor": "Banco Alfa",
              "data_contratacao": date(2023, 6, 1), "valor_contratado": 1_200_000.00,
              "taxa_juros_aa": 0.095, "prazo_meses": 60, "carencia_meses": 6,
-             "sistema_amortizacao": "SAC", "saldo_cp_abertura": 240_000.00,
+             "sistema_amortizacao": "SAC", "juros_na_carencia": "pagos",
+             "saldo_cp_abertura": 240_000.00,
              "saldo_lp_abertura": 720_000.00},
             {"id_contrato": "E002", "modalidade": "CCB", "credor": "Banco Beta",
              "data_contratacao": date(2024, 7, 1), "valor_contratado": 1_500_000.00,
@@ -113,6 +114,11 @@ def dados():
 def erros_de(dados, tmp_path) -> list[str]:
     arquivo = gerar_modelo(tmp_path / "entrada.xlsx", dados)
     return validar(arquivo)[1]
+
+
+def alertas_de(dados, tmp_path) -> list[str]:
+    arquivo = gerar_modelo(tmp_path / "entrada.xlsx", dados)
+    return validar(arquivo)[2]
 
 
 def tem_erro(erros: list[str], *trechos: str) -> bool:
@@ -156,7 +162,7 @@ def test_dados_coerentes_passam(dados, tmp_path):
 def test_importacao_grava_centavos(dados, tmp_path):
     arquivo = gerar_modelo(tmp_path / "entrada.xlsx", dados)
     base = tmp_path / "itr.sqlite"
-    assert importar(arquivo, base) == []
+    assert importar(arquivo, base) == ([], [])
 
     con = sqlite3.connect(base)
     total_d, total_c = con.execute(
@@ -403,5 +409,118 @@ def test_importacao_com_erro_nao_cria_a_base(dados, tmp_path):
     dados["lancamentos"][1]["credito"] = 1.00
     arquivo = gerar_modelo(tmp_path / "entrada.xlsx", dados)
     base = tmp_path / "itr.sqlite"
-    assert importar(arquivo, base) != []
+    erros, _ = importar(arquivo, base)
+    assert erros
     assert not base.exists()
+
+
+# ---------------------------------------------------------------- revisão contábil da Etapa 3
+
+def test_aumento_de_capital_sem_quantidade_de_acoes_e_detectado(dados, tmp_path):
+    # O LPA usa a média ponderada de ações (CPC 41): sem a quantidade, o cálculo fica errado
+    dados["patrimonio_liquido"].append(
+        {"data": date(2025, 6, 30), "tipo_ato": "aumento_capital", "valor": 2_000_000.00})
+    assert tem_erro(erros_de(dados, tmp_path), "patrimonio_liquido", "quantidade_acoes",
+                    "aumento_capital")
+
+
+def test_aumento_de_capital_sem_emissao_de_acoes_aceita_zero(dados, tmp_path):
+    dados["patrimonio_liquido"].append(
+        {"data": date(2025, 6, 30), "tipo_ato": "aumento_capital", "valor": 2_000_000.00,
+         "quantidade_acoes": 0})
+    assert erros_de(dados, tmp_path) == []
+
+
+def test_carencia_sem_tratamento_dos_juros_e_detectada(dados, tmp_path):
+    dados["emprestimos"][0]["juros_na_carencia"] = None  # E001 tem 6 meses de carência
+    assert tem_erro(erros_de(dados, tmp_path), "emprestimos", "juros_na_carencia", "carência")
+
+
+def test_contrato_sem_carencia_dispensa_juros_na_carencia(dados, tmp_path):
+    assert "juros_na_carencia" not in dados["emprestimos"][1]  # E002, sem carência
+    assert erros_de(dados, tmp_path) == []
+
+
+def encerramento_2025(sem=()):
+    """
+    Fecha 2025 sobre os lançamentos de dados_validos() e lança algo em 2026.
+    Resultado de 2025: receita 100.000 - tributos 27.250 + reversão de perda 5.000 = 77.750.
+    `sem` tira partes do fechamento para simular erros.
+    """
+    fim = date(2025, 12, 31)
+    ev52 = [("3.1.01.001", 100_000.00, None), ("3.3.03.001", 5_000.00, None),
+            ("3.1.02.001", None, 18_000.00), ("3.1.02.002", None, 1_650.00),
+            ("3.1.02.003", None, 7_600.00), ("2.3.03.001", None, 77_750.00)]
+    if "perda_esperada_no_ev52" in sem:  # esquece de zerar a conta 3.3.03.001
+        ev52 = [p for p in ev52 if p[0] != "3.3.03.001"]
+        ev52[-1] = ("2.3.03.001", None, 72_750.00)
+    if "ev52_contra_reserva" in sem:  # contrapartida fora de lucros acumulados
+        ev52[-1] = ("2.3.02.002", None, 77_750.00)
+    lanc = partidas(20, fim, "EV52", *ev52)
+    lanc += partidas(21, fim, "EV53", ("2.3.03.001", 3_887.50, None), ("2.3.02.001", None, 3_887.50))
+    lanc += partidas(22, fim, "EV54", ("2.3.03.001", 18_465.63, None), ("2.1.05.001", None, 18_465.63))
+    if "retencao" not in sem:
+        lanc += partidas(23, fim, "EV58", ("2.3.03.001", 55_396.87, None),
+                         ("2.3.02.002", None, 55_396.87))
+    lanc += partidas(24, date(2026, 1, 10), "EV05",
+                     ("1.1.01.002", 10_000.00, None), ("1.1.02.001", None, 10_000.00))
+    return lanc
+
+
+def test_exercicio_encerrado_corretamente_passa(dados, tmp_path):
+    dados["lancamentos"] += encerramento_2025()
+    assert erros_de(dados, tmp_path) == []
+
+
+def test_ano_seguinte_sem_encerramento_e_detectado(dados, tmp_path):
+    # Lançou em 2026 sem fechar 2025: a DRE de 2026 começaria com o resultado de 2025 dentro
+    dados["lancamentos"] += partidas(24, date(2026, 1, 10), "EV05",
+                                     ("1.1.01.002", 10_000.00, None),
+                                     ("1.1.02.001", None, 10_000.00))
+    erros = erros_de(dados, tmp_path)
+    assert tem_erro(erros, "31/12/2025", "3.1.01.001", "zerar todas as contas de resultado")
+
+
+def test_ev52_que_esquece_uma_conta_de_resultado_e_detectado(dados, tmp_path):
+    dados["lancamentos"] += encerramento_2025(sem={"perda_esperada_no_ev52"})
+    assert tem_erro(erros_de(dados, tmp_path), "31/12/2025", "3.3.03.001", "R$ 5.000,00")
+
+
+def test_ev52_com_contrapartida_fora_de_lucros_acumulados_e_detectado(dados, tmp_path):
+    dados["lancamentos"] += encerramento_2025(sem={"ev52_contra_reserva"})
+    assert tem_erro(erros_de(dados, tmp_path), "2.3.02.002", "não faz parte do evento EV52")
+
+
+def test_lucros_acumulados_credores_no_fim_de_2025_sao_detectados(dados, tmp_path):
+    # Fechou o resultado mas não destinou o saldo (faltou a retenção)
+    dados["lancamentos"] += encerramento_2025(sem={"retencao"})
+    assert tem_erro(erros_de(dados, tmp_path), "31/12/2025", "lucros acumulados",
+                    "R$ 55.396,87", "art. 202")
+
+
+def test_saldo_contrario_a_natureza_gera_alerta_e_nao_erro(dados, tmp_path):
+    # Adiantamento a empregado com saldo credor: estranho, mas não bloqueia
+    dados["saldos_abertura"] += [{"codigo_conta": "1.1.06.002", "credito": 1_000.00},
+                                 {"codigo_conta": "1.1.01.001", "debito": 1_000.00}]
+    assert erros_de(dados, tmp_path) == []
+    assert tem_erro(alertas_de(dados, tmp_path), "[alerta]", "1.1.06.002", "saldo credor",
+                    "contrário à natureza")
+
+
+def test_alertas_ficam_registrados_na_base(dados, tmp_path):
+    dados["saldos_abertura"] += [{"codigo_conta": "1.1.06.002", "credito": 1_000.00},
+                                 {"codigo_conta": "1.1.01.001", "debito": 1_000.00}]
+    arquivo = gerar_modelo(tmp_path / "entrada.xlsx", dados)
+    base = tmp_path / "itr.sqlite"
+    erros, alertas = importar(arquivo, base)
+    assert erros == [] and len(alertas) == 1
+    con = sqlite3.connect(base)
+    (mensagem,), = con.execute("SELECT mensagem FROM alerta_validacao").fetchall()
+    con.close()
+    assert "1.1.06.002" in mensagem
+
+
+def test_redutora_invertida_continua_sendo_erro_e_nao_alerta(dados, tmp_path):
+    s = saldo(dados, "1.1.03.009")
+    s["debito"], s["credito"] = 100_000.00, None
+    assert tem_erro(erros_de(dados, tmp_path), "1.1.03.009", "redutora")

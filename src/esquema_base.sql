@@ -84,6 +84,7 @@ CREATE TABLE emprestimo (
     prazo_meses                 INTEGER NOT NULL CHECK (prazo_meses > 0),
     carencia_meses              INTEGER NOT NULL CHECK (carencia_meses >= 0),
     sistema_amortizacao         TEXT NOT NULL CHECK (sistema_amortizacao IN ('SAC', 'PRICE')),
+    juros_na_carencia           TEXT CHECK (juros_na_carencia IN ('pagos', 'capitalizados')),
     saldo_cp_abertura_centavos  INTEGER NOT NULL CHECK (saldo_cp_abertura_centavos >= 0),
     saldo_lp_abertura_centavos  INTEGER NOT NULL CHECK (saldo_lp_abertura_centavos >= 0),
     linha_excel                 INTEGER NOT NULL
@@ -107,4 +108,10 @@ CREATE TABLE diferenca_temporaria (
     descricao            TEXT,
     linha_excel          INTEGER NOT NULL,
     PRIMARY KEY (data_base, tipo)
+);
+
+-- Alertas da validação: não bloquearam a importação, mas pedem revisão (Central de qualidade)
+CREATE TABLE alerta_validacao (
+    id        INTEGER PRIMARY KEY,
+    mensagem  TEXT NOT NULL
 );

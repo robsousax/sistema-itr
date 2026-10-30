@@ -86,6 +86,7 @@ O modelo já vem com as 120 contas analíticas listadas.
 | prazo_meses | inteiro | sim | Inclui a carência |
 | carencia_meses | inteiro | não | |
 | sistema_amortizacao | lista | sim | SAC ou PRICE |
+| juros_na_carencia | lista | se houver carência | `pagos` (pagos periodicamente) ou `capitalizados` (somados ao saldo devedor). Necessário para o cronograma da Etapa 4 |
 | saldo_cp_abertura / saldo_lp_abertura | valor | não | Em 31/12/2024 |
 
 ### `patrimonio_liquido` — capital e atos societários
@@ -94,7 +95,7 @@ O modelo já vem com as 120 contas analíticas listadas.
 | data | data | sim | |
 | tipo_ato | lista | sim | posicao_inicial, aumento_capital, integralizacao_capital, aprovacao_dividendo_adicional |
 | valor | valor | sim | |
-| quantidade_acoes | inteiro | não | Obrigatória na posição inicial (base do LPA, CPC 41) |
+| quantidade_acoes | inteiro | em posicao_inicial e aumento_capital | Total de ações na posição inicial; ações emitidas no aumento (0 se não houve emissão). Base da média ponderada do LPA (CPC 41) |
 | descricao | texto | não | |
 
 ### `diferencas_temporarias` — base dos tributos diferidos (CPC 32)
@@ -134,7 +135,17 @@ Só roda se o nível 1 passar.
   Clientes só a débito e Receita só a crédito. Exceção: eventos reversíveis aceitam o
   lançamento inteiro invertido. São o EV26 (reversão da perda esperada, CPC 48) e o EV28
   (reversão da provisão para perdas em estoques, CPC 16, item 33).
-- Encerramento do resultado (EV52) só em 31/12.
+- Encerramento do resultado (EV52) só em 31/12, com contrapartida só em lucros acumulados
+  (2.3.03.001), pela regra de contas do evento.
+
+**Encerramento do exercício** (em cada 31/12 já encerrado)
+
+O exercício é considerado encerrado quando já há lançamentos do ano seguinte ou quando há um
+EV52 no próprio 31/12. Nesse caso:
+- Todas as contas de resultado ficam zeradas depois do EV52. Se sobrar saldo, a DRE do ano
+  seguinte começa contaminada pelo resultado do ano anterior.
+- Lucros acumulados sem saldo credor depois das destinações (EV53 a EV58), pela mesma regra
+  da abertura (Lei 6.404, art. 202, § 6º).
 
 **Quadros × contabilidade** (em 31/12/2024)
 - Imobilizado: custo dos bens em uso = saldo de cada conta de custo; depreciação acumulada =
@@ -152,6 +163,17 @@ Só roda se o nível 1 passar.
   diferidos. A CSLL diferida (1.2.01.002) usa `csll_aliquota` (9%) e o IRPJ diferido
   (1.2.01.001) usa o restante (25%, já com o adicional). Tolerância de 1 centavo. Ver
   política 3.11 em `docs/01`.
+
+### Erro × alerta
+
+| Tipo | Efeito | Exemplo |
+| --- | --- | --- |
+| Erro | Bloqueia a importação; nada é gravado | Balancete desbalanceado, conta fora do evento, redutora invertida |
+| Alerta | Não bloqueia; fica registrado na tabela `alerta_validacao` para revisão | Conta comum com saldo contrário à natureza na abertura (cliente credor, adiantamento credor, prejuízos acumulados) |
+
+Saldo contrário à natureza pode ser legítimo (adiantamento recebido, pagamento em duplicidade),
+mas também pode ser erro de classificação. Por isso pede revisão humana em vez de bloquear.
+Esta é a primeira peça da Central de qualidade (Etapa 9).
 
 ### O que fica para depois
 - Conferir os quadros contra os **lançamentos do período** (por exemplo, todo bem comprado em
@@ -171,6 +193,7 @@ Só roda se o nível 1 passar.
 | emprestimo | Contratos |
 | ato_pl | Atos societários |
 | diferenca_temporaria | Bases dos diferidos, já com a conta da provisão |
+| alerta_validacao | Alertas que não bloquearam a importação, para a Central de qualidade |
 
 O próprio banco repete parte das regras (`CHECK` e `REFERENCES`): valores nunca negativos,
 débito ou crédito na mesma partida, conta e evento existentes. É uma segunda linha de defesa,
@@ -180,7 +203,7 @@ caso alguém grave na base sem passar pelo validador.
 
 ```bash
 python src/gerar_modelo_entrada.py                 # gera entrada/modelo_entrada.xlsx
-python src/validar_entrada.py entrada/arquivo.xlsx # só valida, não grava
+python src/validar_entrada.py entrada/arquivo.xlsx # só valida, não grava; mostra erros e alertas
 python src/importar_entrada.py                     # valida e grava entrada/entrada_itr.xlsx
 pytest testes/test_entrada.py                      # testes desta etapa
 ```

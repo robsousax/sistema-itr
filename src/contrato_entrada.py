@@ -5,6 +5,8 @@ Este arquivo não executa nada, só declara as regras. O gerador do modelo
 (gerar_modelo_entrada.py), o validador (validar_entrada.py) e os testes leem tudo daqui.
 Para criar ou mudar uma coluna, altere só este arquivo.
 """
+import numbers
+from collections.abc import Callable
 from dataclasses import dataclass
 
 # Tipos de coluna aceitos:
@@ -23,6 +25,21 @@ class Coluna:
     obrigatoria: bool = True
     dominio: tuple[str, ...] = ()   # valores aceitos; vazio = qualquer valor
     descricao: str = ""
+    # Obrigatória só em alguns casos: função que recebe a linha do Excel (ainda sem conversão)
+    # e diz se a coluna precisa estar preenchida; `quando` explica o caso em palavras.
+    obrigatoria_se: Callable | None = None
+    quando: str = ""
+
+
+def _texto_da_celula(v) -> str:
+    """Texto de uma célula ainda não convertida (vazia ou NaN viram '')."""
+    if v is None or (isinstance(v, float) and v != v):
+        return ""
+    return str(v).strip()
+
+
+def _numero_positivo(v) -> bool:
+    return isinstance(v, numbers.Real) and not isinstance(v, bool) and v > 0
 
 
 # Classes do imobilizado e intangível -> (conta de custo, conta redutora, chave da vida útil
@@ -52,6 +69,13 @@ CONTAS_DIFERENCA_TEMPORARIA = {
 
 ATOS_PL = ("posicao_inicial", "aumento_capital", "integralizacao_capital",
            "aprovacao_dividendo_adicional")
+
+# Atos que mudam a quantidade de ações: a quantidade é obrigatória, porque o lucro por ação usa
+# a média ponderada de ações em circulação (CPC 41). Aumento sem emissão de ações: informar 0.
+ATOS_COM_QUANTIDADE = ("posicao_inicial", "aumento_capital")
+
+# Tratamento dos juros durante a carência do empréstimo (necessário para o cronograma)
+JUROS_NA_CARENCIA = ("pagos", "capitalizados")
 
 ABAS: dict[str, list[Coluna]] = {
     "saldos_abertura": [
@@ -95,6 +119,11 @@ ABAS: dict[str, list[Coluna]] = {
         Coluna("carencia_meses", "inteiro", obrigatoria=False,
                descricao="Meses sem amortização de principal"),
         Coluna("sistema_amortizacao", "texto", dominio=("SAC", "PRICE"), descricao="SAC ou PRICE"),
+        Coluna("juros_na_carencia", "texto", obrigatoria=False, dominio=JUROS_NA_CARENCIA,
+               descricao="Na carência, os juros são pagos periodicamente ou capitalizados "
+                         "(somados ao saldo devedor)",
+               obrigatoria_se=lambda linha: _numero_positivo(linha.get("carencia_meses")),
+               quando="há carência (carencia_meses maior que zero)"),
         Coluna("saldo_cp_abertura", "valor", obrigatoria=False,
                descricao="Parcela de curto prazo em 31/12/2024 (R$)"),
         Coluna("saldo_lp_abertura", "valor", obrigatoria=False,
@@ -105,7 +134,11 @@ ABAS: dict[str, list[Coluna]] = {
         Coluna("tipo_ato", "texto", dominio=ATOS_PL, descricao="Natureza do ato"),
         Coluna("valor", "valor", descricao="Valor do ato (R$)"),
         Coluna("quantidade_acoes", "inteiro", obrigatoria=False,
-               descricao="Ações emitidas (ou total, na posição inicial)"),
+               descricao="Total de ações na posição inicial; ações emitidas no aumento de "
+                         "capital (0 se o aumento não emitiu ações)",
+               obrigatoria_se=lambda linha: _texto_da_celula(linha.get("tipo_ato"))
+               in ATOS_COM_QUANTIDADE,
+               quando="tipo_ato é posicao_inicial ou aumento_capital (base do LPA, CPC 41)"),
         Coluna("descricao", "texto", obrigatoria=False, descricao="Ata, assembleia etc."),
     ],
     "diferencas_temporarias": [

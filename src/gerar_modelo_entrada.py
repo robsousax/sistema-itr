@@ -124,7 +124,12 @@ def gerar_modelo(destino: Path, dados: dict[str, list[dict]] | None = None) -> P
         for j, c in enumerate(colunas, start=1):
             cel = ws.cell(row=1, column=j, value=c.nome)
             cel.fill, cel.font = COR_CABECALHO, FONTE_CABECALHO
-            obrig = "Obrigatória" if c.obrigatoria else "Opcional"
+            if c.obrigatoria:
+                obrig = "Obrigatória"
+            elif c.obrigatoria_se:
+                obrig = f"Obrigatória quando {c.quando}"
+            else:
+                obrig = "Opcional"
             cel.comment = Comment(f"{obrig}. {c.descricao}", "Sistema ITR")
             letra = get_column_letter(j)
             ws.column_dimensions[letra].width = max(14, len(c.nome) + 4)

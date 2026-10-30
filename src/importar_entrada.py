@@ -19,7 +19,8 @@ import pandas as pd
 
 from checar_config import carregar
 from contrato_entrada import CLASSES_IMOBILIZADO, CONTAS_DIFERENCA_TEMPORARIA
-from validar_entrada import carregar_empresa, imprimir_erros, periodos, rs, validar
+from validar_entrada import (carregar_empresa, imprimir_alertas, imprimir_erros, periodos, rs,
+                             validar)
 
 RAIZ = Path(__file__).resolve().parent.parent
 ENTRADA_PADRAO = RAIZ / "entrada" / "entrada_itr.xlsx"
@@ -50,7 +51,8 @@ def sha256(caminho: Path) -> str:
     return hashlib.sha256(caminho.read_bytes()).hexdigest()
 
 
-def gravar(dados: dict[str, pd.DataFrame], arquivo: Path, destino: Path) -> None:
+def gravar(dados: dict[str, pd.DataFrame], arquivo: Path, destino: Path,
+           alertas: list[str] | None = None) -> None:
     cfg = carregar()
     empresa = carregar_empresa()
     abertura, _, _ = periodos(empresa)
@@ -91,18 +93,23 @@ def gravar(dados: dict[str, pd.DataFrame], arquivo: Path, destino: Path) -> None
         inserir(con, "emprestimo", dados["emprestimos"].rename(columns={"linha": "linha_excel"}))
         inserir(con, "ato_pl", dados["patrimonio_liquido"].rename(columns={"linha": "linha_excel"}))
         inserir(con, "diferenca_temporaria", dif)
+        # Alertas ficam registrados na base para a Central de qualidade (Etapa 9)
+        inserir(con, "alerta_validacao", pd.DataFrame({"mensagem": alertas or []}))
         con.commit()
     finally:
         con.close()
     temporario.replace(destino)  # só agora a base antiga é substituída
 
 
-def importar(arquivo: Path, destino: Path = BASE_PADRAO) -> list[str]:
-    """Valida e grava. Devolve a lista de erros; lista vazia = base gravada."""
-    dados, erros = validar(arquivo)
+def importar(arquivo: Path, destino: Path = BASE_PADRAO) -> tuple[list[str], list[str]]:
+    """
+    Valida e grava. Devolve (erros, alertas). Sem erros = base gravada (com os alertas
+    registrados na tabela alerta_validacao).
+    """
+    dados, erros, alertas = validar(arquivo)
     if not erros:
-        gravar(dados, arquivo, destino)
-    return erros
+        gravar(dados, arquivo, destino, alertas)
+    return erros, alertas
 
 
 def main() -> None:
@@ -110,7 +117,8 @@ def main() -> None:
     if not arquivo.exists():
         raise SystemExit(f"Arquivo não encontrado: {arquivo}\n"
                          f"Gere o modelo com: python src/gerar_modelo_entrada.py")
-    erros = importar(arquivo)
+    erros, alertas = importar(arquivo)
+    imprimir_alertas(alertas)
     if erros:
         imprimir_erros(erros)
         raise SystemExit("\nNada foi gravado. Corrija o Excel e rode de novo.")

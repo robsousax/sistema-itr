@@ -28,7 +28,7 @@ Nada é publicado se uma checagem de erro falhar.
 | 0 | Ambiente e Git | Concluída: `docs/00_guia_instalacao_windows.md` |
 | 1 | Empresa e políticas contábeis | Concluída: `docs/01_empresa_e_politicas.md`, `config/empresa.yaml` |
 | 2 | Plano de contas e mapeamentos | Concluída: `config/*.csv`, `docs/02_plano_de_contas_e_regras.md` |
-| 3 | Contrato de entrada e SQLite | Concluída: `entrada/modelo_entrada.xlsx`, `docs/03_contrato_de_entrada.md` |
+| 3 | Contrato de entrada e SQLite | Concluída e revisada: `entrada/modelo_entrada.xlsx`, `docs/03_contrato_de_entrada.md` |
 | 4 | Gerador de eventos | Próxima |
 | 5 | BP e DRE | — |
 | 6 | DFC e DMPL | — |
