@@ -1,0 +1,189 @@
+# Roteiro de negócio da Orbe Suprimentos S.A. (fictícia) — Etapa 4.
+#
+# O gerador (src/gerar_dados.py) transforma este roteiro em lançamentos contábeis.
+# Todos os números são HIPOTÉTICOS. Valores em reais.
+# Mesma semente = mesmos lançamentos, centavo por centavo.
+
+semente: 2026
+
+# Mês-base usado para montar o balanço de abertura (31/12/2024) em regime: clientes, estoques,
+# fornecedores e obrigações de dezembro saem das mesmas fórmulas usadas no período.
+dezembro_2024:
+  receita_bruta_mensal: 9800000.00
+  margem_bruta: 0.30
+  pmr_dias: 45
+  pme_dias: 60
+  pmp_dias: 60
+  taxa_perda_esperada: 0.025
+
+# Um bloco por trimestre. Receita é a média mensal; cada mês varia até ±variacao_mensal.
+# taxa_perda_esperada: provisão sobre o saldo de clientes (resultado da matriz da política 3.3).
+trimestres:
+  1T25:
+    evento: "Operação regular"
+    receita_bruta_mensal: 10000000.00
+    margem_bruta: 0.30
+    pmr_dias: 45
+    pme_dias: 60
+    pmp_dias: 60
+    taxa_perda_esperada: 0.025
+    baixas_incobraveis: 60000.00
+  2T25:
+    evento: "Expansão de vendas: mais clientes a receber e mais estoque"
+    receita_bruta_mensal: 10600000.00
+    margem_bruta: 0.30
+    pmr_dias: 46
+    pme_dias: 62
+    pmp_dias: 60
+    taxa_perda_esperada: 0.025
+    baixas_incobraveis: 70000.00
+  3T25:
+    evento: "Investimento em estrutura: caminhões e empilhadeiras via FINAME"
+    receita_bruta_mensal: 11000000.00
+    margem_bruta: 0.30
+    pmr_dias: 45
+    pme_dias: 60
+    pmp_dias: 60
+    taxa_perda_esperada: 0.025
+    baixas_incobraveis: 70000.00
+  4T25:
+    evento: "Expansão comercial: equipe e marketing maiores, preço mais agressivo; dividendos declarados"
+    receita_bruta_mensal: 11700000.00
+    margem_bruta: 0.285
+    pmr_dias: 47
+    pme_dias: 60
+    pmp_dias: 60
+    taxa_perda_esperada: 0.027
+    baixas_incobraveis: 80000.00
+  1T26:
+    evento: "Aumento da inadimplência: prazo de recebimento e perda esperada sobem"
+    receita_bruta_mensal: 11800000.00
+    margem_bruta: 0.29
+    pmr_dias: 53
+    pme_dias: 62
+    pmp_dias: 60
+    taxa_perda_esperada: 0.040
+    baixas_incobraveis: 90000.00
+  2T26:
+    evento: "Ganho de eficiência: margem se recupera; incobráveis do 1T26 são baixados"
+    receita_bruta_mensal: 12200000.00
+    margem_bruta: 0.305
+    pmr_dias: 49
+    pme_dias: 60
+    pmp_dias: 62
+    taxa_perda_esperada: 0.033
+    baixas_incobraveis: 420000.00
+  3T26:
+    evento: "Crescimento financiado por crédito: CCB de capital de giro e ampliação do galpão"
+    receita_bruta_mensal: 12700000.00
+    margem_bruta: 0.30
+    pmr_dias: 47
+    pme_dias: 66
+    pmp_dias: 62
+    taxa_perda_esperada: 0.030
+    baixas_incobraveis: 100000.00
+
+variacao_mensal: 0.015
+
+vendas:
+  devolucoes: 0.006                 # % da receita bruta
+  descontos_comerciais: 0.003       # abatimentos concedidos depois da venda
+  juros_recebidos_clientes: 0.0005  # % dos recebimentos (multa e juros por atraso)
+  adiantamento_cliente: 150000.00   # recebido no 2º mês de cada trimestre, entregue no 3º
+
+estoques:
+  taxa_provisao_perdas: 0.012       # % do saldo de mercadorias
+  baixa_trimestral: 50000.00        # mercadoria perdida baixada contra a provisão
+
+compras:
+  desconto_obtido: 0.002            # % dos pagamentos a fornecedores de mercadorias
+
+folha:                              # valores mensais de 2025, antes do reajuste
+  salarios_comercial: 230000.00
+  salarios_administrativo: 210000.00
+  honorarios_administracao: 70000.00
+  comissoes: 0.009                  # % da receita bruta
+  beneficios_comercial: 32000.00
+  beneficios_administrativo: 28000.00
+  inss_patronal: 0.278              # 20% + RAT + terceiros, sobre salários e comissões
+  fgts: 0.08
+  inss_empregado: 0.09              # retido do empregado
+  irrf_salarios: 0.075              # retido do empregado
+  encargos_sobre_ferias_13: 0.36
+  reajuste_anual: 0.05              # dissídio em maio
+  mes_reajuste: 5
+  expansao_comercial_4t25: 0.12     # aumento da equipe comercial a partir de out/2025
+  plr_mensal: {2024: 40000.00, 2025: 40000.00, 2026: 45000.00}
+  meses_de_ferias_provisionados: 7  # saldo de férias na abertura
+
+despesas:                           # mensais; % = sobre a receita bruta do mês
+  fretes_sobre_vendas: 0.022
+  marketing: 0.006
+  marketing_4t25: 0.010
+  combustivel_e_frota: 0.008
+  aluguel_showroom: 25000.00
+  energia_e_agua: 60000.00
+  telecom_e_internet: 20000.00
+  servicos_de_terceiros: 50000.00
+  auditoria_independente: 35000.00
+  manutencao_predial: 25000.00
+  software_saas: 20000.00
+  material_de_escritorio: 10000.00
+  iptu_e_taxas: 12000.00
+  outras_despesas: 8000.00
+  reajuste_fixas_2026: 0.05        # despesas fixas sobem 5% em 2026
+  iss_retido: 0.05                  # sobre serviços de terceiros e auditoria
+  irrf_terceiros: 0.015
+  tarifas_bancarias: 8000.00
+  seguro_anual: 360000.00           # renovado em agosto; apropriado em 12 meses
+  mes_renovacao_seguro: 8
+
+financeiro:
+  cdi_aa: {2025: 0.140, 2026: 0.130}  # hipotético
+  irrf_aplicacoes: 0.20
+  iof_credito: 0.0188                 # 0,38% + 0,0041% ao dia por 365 dias
+  caixa_minimo: 1000000.00            # abaixo disso, resgata do CDB
+  caixa_alvo: 2000000.00
+  caixa_maximo: 4000000.00            # acima disso, aplica o excedente no CDB
+
+abertura:                           # o que não sai do mês-base
+  caixa_geral: 20000.00
+  bancos: 2000000.00
+  cdb: 14000000.00
+  seguros_a_apropriar: 210000.00    # apólice de ago/2024: restam 7 meses
+  irpj_a_pagar_4t24: 420000.00
+  csll_a_pagar_4t24: 160000.00
+  dividendos_a_pagar_2024: 1200000.00
+  capital_social: 30000000.00
+  acoes: 30000000
+  reserva_legal: 2400000.00
+  # Reserva de retenção de lucros = valor que fecha o balanço (ativo - passivo - capital - reserva legal)
+
+datas:
+  pagamento_dividendos_2024: "2025-04-25"
+  pagamento_dividendos_2025: "2026-05-20"
+
+# Bens do imobilizado e do intangível. forma: abertura, a_vista, a_prazo, finame ou obra.
+bens:
+  - {id: B001, descricao: "Terreno do centro de distribuição", classe: terrenos, data: "2015-03-10", custo: 5000000.00, forma: abertura}
+  - {id: B002, descricao: "Galpão do centro de distribuição", classe: edificacoes, data: "2015-03-10", custo: 15000000.00, forma: abertura}
+  - {id: B003, descricao: "Estantes e porta-paletes", classe: maquinas_e_equipamentos, data: "2020-06-20", custo: 1400000.00, forma: abertura}
+  - {id: B004, descricao: "Empilhadeiras (lote 2020)", classe: maquinas_e_equipamentos, data: "2020-06-20", custo: 1000000.00, forma: abertura}
+  - {id: B005, descricao: "Caminhões de entrega (lote 2022)", classe: veiculos, data: "2022-01-15", custo: 3000000.00, forma: abertura}
+  - {id: B006, descricao: "Veículos utilitários (lote 2021)", classe: veiculos, data: "2021-09-10", custo: 400000.00, forma: abertura, data_baixa: "2026-05-15", valor_venda: 90000.00}
+  - {id: B007, descricao: "Móveis e utensílios", classe: moveis_e_utensilios, data: "2019-01-20", custo: 600000.00, forma: abertura}
+  - {id: B008, descricao: "Computadores e servidores", classe: equipamentos_de_informatica, data: "2023-01-10", custo: 900000.00, forma: abertura}
+  - {id: S001, descricao: "Licença perpétua do ERP", classe: softwares, data: "2023-07-05", custo: 1200000.00, forma: abertura}
+  - {id: B009, descricao: "Notebooks e coletores de dados", classe: equipamentos_de_informatica, data: "2025-03-12", custo: 150000.00, forma: a_vista}
+  - {id: B010, descricao: "Caminhões de entrega (FINAME 2025)", classe: veiculos, data: "2025-08-14", custo: 2500000.00, forma: finame, contrato: E002}
+  - {id: B011, descricao: "Empilhadeiras elétricas (FINAME 2025)", classe: maquinas_e_equipamentos, data: "2025-08-14", custo: 1500000.00, forma: finame, contrato: E002}
+  - {id: B012, descricao: "Móveis da expansão comercial", classe: moveis_e_utensilios, data: "2025-10-08", custo: 120000.00, forma: a_vista}
+  - {id: S002, descricao: "Módulo WMS do ERP", classe: softwares, data: "2026-01-12", custo: 240000.00, forma: a_vista}
+  - {id: B013, descricao: "Porta-paletes da ampliação", classe: maquinas_e_equipamentos, data: "2026-02-10", custo: 300000.00, forma: a_prazo, parcelas: 3}
+  # Obra: pagamentos mensais em andamento (1.2.02.007); entra em uso e vira edificação na conclusão
+  - {id: B014, descricao: "Ampliação do galpão", classe: edificacoes, data: "2026-09-30", custo: 2000000.00, forma: obra, pagamentos: ["2026-04-15", "2026-05-15", "2026-06-15", "2026-07-15", "2026-08-14"]}
+
+emprestimos:
+  - {id: E001, modalidade: FINAME, credor: "Banco Alfa (repasse BNDES)", data: "2023-06-15", valor: 2400000.00, taxa_aa: 0.095, prazo_meses: 60, carencia_meses: 6, sistema: SAC, juros_na_carencia: pagos}
+  - {id: E002, modalidade: FINAME, credor: "Banco Beta (repasse BNDES)", data: "2025-08-14", valor: 4000000.00, taxa_aa: 0.105, prazo_meses: 60, carencia_meses: 6, sistema: SAC, juros_na_carencia: pagos}
+  - {id: E003, modalidade: CCB, credor: "Banco Gama", data: "2026-07-10", valor: 8000000.00, taxa_aa: 0.165, prazo_meses: 36, carencia_meses: 0, sistema: PRICE}
