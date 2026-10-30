@@ -36,8 +36,8 @@ Nada é publicado se uma checagem de erro falhar.
 | 8 | Indicadores | Concluída: `src/indicadores.py`, `docs/08_indicadores.md` |
 | 9 | Central de qualidade | Concluída: `src/qualidade.py`, `docs/09_central_de_qualidade.md` |
 | 10 | Excel e PDF | Concluída: `src/gerar_itr.py`, `modelos/`, `exemplos/`, `docs/10_excel_e_pdf.md` |
-| 11 | Power BI | Próxima |
-| 12 | Web e vitrine | — |
+| 11 | Power BI | Concluída: `src/exportar_parquet.py`, `powerbi/`, `docs/11_power_bi.md` |
+| 12 | Web e vitrine | Próxima |
 
 ## Estrutura de pastas
 
@@ -51,7 +51,7 @@ sistema-itr/
 ├── saidas/       ITRs gerados (não vão para o Git)
 ├── exemplos/     um ITR do 3T26 já gerado, em Excel e PDF, para ver sem instalar nada
 ├── exportacao/   arquivos Parquet para o Power BI
-├── powerbi/      painel .pbix
+├── powerbi/      painel .pbix, consultas Power Query e medidas DAX
 ├── testes/       testes automáticos (pytest)
 └── docs/         decisões, regras contábeis, dicionário de dados, limitações
 ```
@@ -71,6 +71,7 @@ python src/notas.py                # mostra as 10 notas explicativas e confere c
 python src/indicadores.py          # indicadores trimestrais e reconciliação do EBITDA (Res. CVM 156)
 python src/qualidade.py            # Central de qualidade: 20 verificações; libera ou bloqueia a publicação
 python src/gerar_itr.py            # gera o ITR em Excel, PDF e HTML em saidas/3T26/ (só se a Central liberar)
+python src/exportar_parquet.py     # exporta o modelo estrela em Parquet para o Power BI (exportacao/)
 pytest                             # roda todos os testes
 ```
 
@@ -87,3 +88,4 @@ pytest                             # roda todos os testes
 - `docs/08_indicadores.md`: fórmulas dos indicadores, convenções e EBITDA
 - `docs/09_central_de_qualidade.md`: as 20 verificações, erro × alerta e o registro de cada execução
 - `docs/10_excel_e_pdf.md`: o que vai em cada aba e página, conferências por fórmula e o comentário de desempenho
+- `docs/11_power_bi.md`: modelo estrela, medidas semiaditivas e o roteiro de montagem do painel

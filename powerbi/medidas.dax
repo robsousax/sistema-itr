@@ -1,0 +1,243 @@
+// Medidas DAX do painel do Sistema ITR. Crie cada uma na tabela _Medidas (Nova medida) e cole
+// a fórmula a partir do nome. Separador de argumentos: vírgula (padrão do Power BI Desktop).
+// Formato sugerido entre colchetes no comentário de cada medida.
+//
+// Ideia central: o Python já calculou cada linha das demonstrações por trimestre. O Power BI
+// só agrega, e a forma de agregar depende da linha (coluna dim_linha[agregacao]):
+//   soma      fluxo (DRE, DRA, DFC, DVA, EBITDA): 1T26 + 2T26 + 3T26 = 9M26
+//   ultimo    saldo (BP, saldo final de caixa): vale o último trimestre do período
+//   primeiro  saldo inicial de caixa da DFC: vale o primeiro trimestre do período
+// Medida que não se soma ao longo do tempo é chamada de semiaditiva.
+
+
+// =====================================================================  1. Base das demonstrações
+
+Fluxo =
+SUM ( fato_demonstracao[valor] )
+
+// Saldo no último trimestre com dados dentro do período filtrado.
+// LASTNONBLANK percorre as datas do contexto e fica com a última em que existe linha no fato.
+Saldo Final =
+CALCULATE (
+    SUM ( fato_demonstracao[valor] ),
+    LASTNONBLANK ( dim_calendario[data], CALCULATE ( COUNTROWS ( fato_demonstracao ) ) )
+)
+
+Saldo Inicial =
+CALCULATE (
+    SUM ( fato_demonstracao[valor] ),
+    FIRSTNONBLANK ( dim_calendario[data], CALCULATE ( COUNTROWS ( fato_demonstracao ) ) )
+)
+
+// A medida da matriz: escolhe a agregação pela linha. Sem uma única linha no contexto
+// (total geral da matriz), fica em branco, porque somar Ativo com Receita não tem sentido.
+Valor DF =
+SWITCH (
+    SELECTEDVALUE ( dim_linha[agregacao] ),
+    "soma", [Fluxo],
+    "ultimo", [Saldo Final],
+    "primeiro", [Saldo Inicial]
+)
+
+// [#,##0]
+Valor DF (R$ mil) =
+DIVIDE ( [Valor DF], 1000 )
+
+// Cor de fundo das linhas de grupo e subtotal (formatação condicional > valor do campo)
+Cor da Linha =
+IF ( SELECTEDVALUE ( dim_linha[destaque] ), "#EEF2F5" )
+
+
+// =====================================================================  2. Resultado
+
+// [#,##0] para as medidas em R$; os cartões mostram em mil com "Unidades de exibição: Milhares"
+Receita Líquida =
+CALCULATE ( [Fluxo], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "3.01" )
+
+Resultado Bruto =
+CALCULATE ( [Fluxo], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "3.03" )
+
+EBIT =
+CALCULATE ( [Fluxo], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "3.05" )
+
+Resultado Financeiro =
+CALCULATE ( [Fluxo], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "3.06" )
+
+IR e CSLL =
+CALCULATE ( [Fluxo], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "3.08" )
+
+Lucro Líquido =
+CALCULATE ( [Fluxo], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "3.11" )
+
+// Ajuste de depreciação da DFC (linha 6.01.01.02)
+Depreciação e Amortização =
+CALCULATE ( [Fluxo], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "6.01.01.02" )
+
+// EBITDA calculado no próprio Power BI (Res. CVM 156). IR e resultado financeiro vêm com o
+// sinal da DRE (despesa negativa), por isso entram subtraindo.
+EBITDA =
+[Lucro Líquido] - [IR e CSLL] - [Resultado Financeiro] + [Depreciação e Amortização]
+
+// [0,0%]
+Margem Bruta =
+DIVIDE ( [Resultado Bruto], [Receita Líquida] )
+
+Margem EBITDA =
+DIVIDE ( [EBITDA], [Receita Líquida] )
+
+Margem Líquida =
+DIVIDE ( [Lucro Líquido], [Receita Líquida] )
+
+
+// =====================================================================  3. Comparações no tempo
+
+// Mesmo período do ano anterior (3T26 -> 3T25; 9M26 -> 9M25)
+Receita Líquida Ano Anterior =
+CALCULATE ( [Receita Líquida], SAMEPERIODLASTYEAR ( dim_calendario[data] ) )
+
+// [+0,0%;-0,0%;0,0%]
+Var. Receita a/a =
+VAR Anterior = [Receita Líquida Ano Anterior]
+RETURN
+    IF ( NOT ISBLANK ( Anterior ), DIVIDE ( [Receita Líquida] - Anterior, Anterior ) )
+
+Lucro Líquido Ano Anterior =
+CALCULATE ( [Lucro Líquido], SAMEPERIODLASTYEAR ( dim_calendario[data] ) )
+
+Var. Lucro a/a =
+VAR Anterior = [Lucro Líquido Ano Anterior]
+RETURN
+    IF ( NOT ISBLANK ( Anterior ), DIVIDE ( [Lucro Líquido] - Anterior, Anterior ) )
+
+// Últimos 12 meses. Antes de existirem 4 trimestres de história, fica em branco (n.d.).
+Receita Líquida UDM =
+VAR Janela =
+    DATESINPERIOD ( dim_calendario[data], MAX ( dim_calendario[data] ), -12, MONTH )
+VAR Trimestres =
+    CALCULATE ( DISTINCTCOUNT ( fato_demonstracao[trimestre] ), Janela,
+                REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "3.01" )
+RETURN
+    IF ( Trimestres = 4, CALCULATE ( [Receita Líquida], Janela ) )
+
+
+// =====================================================================  4. Balanço (semiaditivas)
+
+Caixa e Equivalentes =
+CALCULATE ( [Saldo Final], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "1.01.01" )
+
+Patrimônio Líquido =
+CALCULATE ( [Saldo Final], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "2.03" )
+
+Ativo Total =
+CALCULATE ( [Saldo Final], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "1" )
+
+// Empréstimos e financiamentos de curto (2.01.04) e de longo prazo (2.02.01)
+Dívida Bruta =
+CALCULATE ( [Saldo Final], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] IN { "2.01.04", "2.02.01" } )
+
+// Negativo = a empresa tem mais caixa do que dívida
+Dívida Líquida =
+[Dívida Bruta] - [Caixa e Equivalentes]
+
+
+// =====================================================================  5. Razão contábil
+
+// Saldo acumulado das contas até a última data do contexto. ALL ( dim_calendario ) tira
+// o filtro de trimestre para poder somar desde a abertura. Devedor positivo, credor negativo.
+Saldo Contábil =
+CALCULATE (
+    SUM ( fato_lancamento[movimento] ),
+    FILTER ( ALL ( dim_calendario ), dim_calendario[data] <= MAX ( dim_calendario[data] ) )
+)
+
+Movimento do Período =
+SUM ( fato_lancamento[movimento] )
+
+Caixa pelo Razão =
+CALCULATE ( [Saldo Contábil], dim_conta[linha_bp_dre] = "1.01.01" )
+
+
+// =====================================================================  6. Indicadores da Etapa 8
+
+// Os indicadores vêm prontos do Python (fato_indicador): o Power BI só mostra.
+// Só há valor com um indicador e um trimestre no contexto.
+Indicador =
+IF (
+    HASONEVALUE ( dim_indicador[codigo] ) && HASONEVALUE ( dim_calendario[trimestre] ),
+    SUM ( fato_indicador[valor] )
+)
+
+// Para a matriz de indicadores: formata conforme a unidade de cada um
+Indicador (texto) =
+VAR Valor = [Indicador]
+VAR Unidade = SELECTEDVALUE ( dim_indicador[unidade] )
+VAR TemContexto = HASONEVALUE ( dim_indicador[codigo] ) && HASONEVALUE ( dim_calendario[trimestre] )
+RETURN
+    IF (
+        TemContexto,
+        IF (
+            ISBLANK ( Valor ), "n.d.",
+            SWITCH (
+                Unidade,
+                "%", FORMAT ( Valor, "0.0%" ),
+                "x", FORMAT ( Valor, "0.00" ) & "x",
+                "dias", FORMAT ( Valor, "0" ),
+                "R$", FORMAT ( Valor / 1000, "#,##0" )
+            )
+        )
+    )
+
+PMR (dias) =
+CALCULATE ( [Indicador], dim_indicador[codigo] = "pmr" )
+
+PME (dias) =
+CALCULATE ( [Indicador], dim_indicador[codigo] = "pme" )
+
+PMP (dias) =
+CALCULATE ( [Indicador], dim_indicador[codigo] = "pmp" )
+
+Ciclo Financeiro (dias) =
+CALCULATE ( [Indicador], dim_indicador[codigo] = "ciclo_financeiro" )
+
+Liquidez Corrente =
+CALCULATE ( [Indicador], dim_indicador[codigo] = "liq_corrente" )
+
+
+// =====================================================================  7. Conferências (devem dar 0)
+
+// EBITDA do Power BI × EBITDA reconciliado pelo sistema (linha E.05)
+EBITDA do Sistema =
+CALCULATE ( [Fluxo], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "E.05" )
+
+Conferência EBITDA =
+[EBITDA] - [EBITDA do Sistema]
+
+// Caixa somado lançamento a lançamento × caixa do Balanço
+Conferência Caixa =
+[Caixa pelo Razão] - [Caixa e Equivalentes]
+
+// Dívida líquida pelo Balanço × indicador calculado pelo Python
+Conferência Dívida Líquida =
+[Dívida Líquida] - CALCULATE ( [Indicador], dim_indicador[codigo] = "divida_liquida" )
+
+// Ativo − (Passivo + PL)
+Conferência Balanço =
+[Ativo Total] - CALCULATE ( [Saldo Final], REMOVEFILTERS ( dim_linha ), dim_linha[codigo] = "2" )
+
+
+// =====================================================================  8. Central de qualidade
+
+Verificações =
+COUNTROWS ( fato_qualidade )
+
+Verificações Aprovadas =
+CALCULATE ( COUNTROWS ( fato_qualidade ), fato_qualidade[status] = "aprovado" )
+
+Alertas =
+CALCULATE ( COUNTROWS ( fato_qualidade ), fato_qualidade[status] = "alerta" ) + 0
+
+Erros =
+CALCULATE ( COUNTROWS ( fato_qualidade ), fato_qualidade[status] = "erro" ) + 0
+
+Situação da Publicação =
+IF ( [Erros] = 0, "Liberada", "Bloqueada" )
