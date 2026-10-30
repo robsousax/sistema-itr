@@ -31,8 +31,8 @@ Nada é publicado se uma checagem de erro falhar.
 | 3 | Contrato de entrada e SQLite | Concluída e revisada: `entrada/modelo_entrada.xlsx`, `docs/03_contrato_de_entrada.md` |
 | 4 | Gerador de eventos | Concluída: `config/roteiro.yaml`, `entrada/entrada_itr.xlsx`, `docs/04_gerador_de_dados.md` |
 | 5 | BP e DRE | Concluída: `src/demonstracoes.py`, `docs/05_bp_e_dre.md` |
-| 6 | DFC e DMPL | Próxima |
-| 7 | DRA, DVA e notas | — |
+| 6 | DFC e DMPL | Concluída: `src/dfc_dmpl.py`, `docs/06_dfc_e_dmpl.md` |
+| 7 | DRA, DVA e notas | Próxima |
 | 8 | Indicadores | — |
 | 9 | Central de qualidade | — |
 | 10 | Excel e PDF | — |
@@ -64,6 +64,7 @@ python src/gerar_modelo_entrada.py # gera entrada/modelo_entrada.xlsx (Excel de 
 python src/gerar_dados.py          # gera entrada/entrada_itr.xlsx com a contabilidade da Orbe (roteiro)
 python src/importar_entrada.py     # valida entrada/entrada_itr.xlsx e grava base/itr.sqlite
 python src/demonstracoes.py        # mostra o BP e a DRE do 3T26 em R$ mil (ou: ... 2T26)
+python src/dfc_dmpl.py             # mostra a DFC e a DMPL do 3T26, com as conferências
 pytest                             # roda todos os testes
 ```
 
@@ -75,3 +76,4 @@ pytest                             # roda todos os testes
 - `docs/03_contrato_de_entrada.md`: formato do Excel de entrada, validações e tabelas da base
 - `docs/04_gerador_de_dados.md`: como o roteiro vira lançamentos, a história da Orbe e as simplificações
 - `docs/05_bp_e_dre.md`: como o motor monta o BP e a DRE, períodos do CPC 21 e lucro por ação
+- `docs/06_dfc_e_dmpl.md`: DFC indireta conferida pelo método direto, transações sem caixa e DMPL por coluna
