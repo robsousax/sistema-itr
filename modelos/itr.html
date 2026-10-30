@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>{{ empresa }} — ITR {{ data_base }}</title>
+<style>{{ css }}</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="capa-topo">ITR – Informações Trimestrais · Demonstrações individuais</div>
+  <h1>{{ empresa }}</h1>
+  <div class="capa-periodo">Informações financeiras intermediárias em {{ data_base }}</div>
+  <div class="capa-sub">{{ trimestre }} · Valores em R$ mil, exceto quando indicado</div>
+  <ul class="destaques">
+    {% for d in destaques %}<li>{{ d }}</li>{% endfor %}
+  </ul>
+  <div class="selo">Simulação acadêmica · empresa e números fictícios · estrutura inspirada no formulário ITR da CVM</div>
+  <div class="capa-rodape">
+    Central de qualidade: {{ qualidade.total }} verificações, {{ qualidade.aprovadas }} aprovadas,
+    {{ qualidade.alertas }} alertas, {{ qualidade.erros }} erros · execução {{ qualidade.run_id }}<br>
+    Gerado em {{ gerado_em }} pelo Sistema ITR
+  </div>
+</section>
+
+<section class="pagina">
+  <h2>Índice</h2>
+  <ol class="indice">
+    {% for s in secoes %}<li><a href="#{{ s.id }}">{{ s.titulo }}</a></li>{% endfor %}
+  </ol>
+</section>
+
+<section class="pagina" id="comentario">
+  <h2>Comentário de desempenho</h2>
+  <p class="nota-sec">Escrito por regras a partir dos números do sistema; só cita causas registradas.</p>
+  {% for titulo, texto in comentario %}
+    <h3>{{ titulo }}</h3><p>{{ texto }}</p>
+  {% endfor %}
+</section>
+
+{% for d in demonstracoes %}
+<section class="pagina" id="{{ d.id }}">
+  <h2>{{ d.titulo }}</h2>
+  <p class="nota-sec">{{ d.subtitulo }}</p>
+  <table class="df">
+    <thead><tr><th class="cod">Código</th><th class="desc">Descrição da conta</th>
+      {% for c in d.colunas %}<th>{{ c | safe }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for l in d.linhas %}
+      <tr class="{{ l.classe }}"><td class="cod">{{ l.codigo }}</td>
+        <td class="desc n{{ l.nivel }}">{{ l.descricao }}</td>
+        {% for v in l.valores %}<td class="v{% if v.startswith('-') %} neg{% endif %}">{{ v }}</td>{% endfor %}</tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if d.rodape %}<p class="rodape-tab">{{ d.rodape }}</p>{% endif %}
+</section>
+{% endfor %}
+
+<section class="pagina" id="notas">
+  <h2>Notas explicativas</h2>
+  <p class="nota-sec">Notas selecionadas (CPC 21). Valores em R$ mil, exceto quando indicado.</p>
+  {% for n in notas %}
+  <article class="nota">
+    <h3><span class="num">{{ n.numero }}</span>{{ n.titulo }}</h3>
+    {% for p in n.paragrafos %}<p>{{ p }}</p>{% endfor %}
+    {% for q in n.quadros %}
+      <div class="quadro">
+        <div class="qt">{{ q.titulo }} <span>({{ q.unidade }})</span></div>
+        <table class="tn">
+          <thead><tr><th></th>{% for c in q.colunas %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+          <tbody>{% for l in q.linhas %}
+            <tr class="{% if l.destaque %}total{% endif %}"><td class="desc">{{ l.rotulo }}</td>
+            {% for v in l.valores %}<td class="v{% if v.startswith('-') %} neg{% endif %}">{{ v }}</td>{% endfor %}</tr>
+          {% endfor %}</tbody>
+        </table>
+      </div>
+    {% endfor %}
+  </article>
+  {% endfor %}
+</section>
+
+<section class="pagina" id="indicadores">
+  <h2>Indicadores</h2>
+  <p class="nota-sec">Prazos médios com saldo médio do trimestre; indicadores UDM (últimos 12 meses) só a partir de 12 meses de histórico (n.d. antes disso). Dívida líquida negativa = mais caixa que dívida.</p>
+  <table class="tn ind">
+    <thead><tr><th></th>{% for t in trimestres %}<th>{{ t }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for g in indicadores %}
+      <tr class="grp"><td colspan="{{ trimestres|length + 1 }}">{{ g.grupo }}</td></tr>
+      {% for i in g.itens %}<tr><td class="desc">{{ i.nome }}<span class="formula">{{ i.formula }}</span></td>
+        {% for v in i.valores %}<td class="v">{{ v }}</td>{% endfor %}</tr>{% endfor %}
+    {% endfor %}
+    </tbody>
+  </table>
+  <h3>Reconciliação do EBITDA (Resolução CVM 156) — R$ mil</h3>
+  <table class="tn ind">
+    <thead><tr><th></th>{% for t in trimestres %}<th>{{ t }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for l in ebitda %}
+      <tr class="{% if l.destaque %}total{% endif %}"><td class="desc">{{ l.rotulo }}</td>
+      {% for v in l.valores %}<td class="v{% if v.startswith('-') %} neg{% endif %}">{{ v }}</td>{% endfor %}</tr>
+    {% endfor %}</tbody>
+  </table>
+</section>
+
+<section class="pagina" id="qualidade">
+  <h2>Central de qualidade</h2>
+  <p class="nota-sec">Execução {{ qualidade.run_id }} · arquivo de origem {{ qualidade.arquivo }} (SHA-256 {{ qualidade.sha }}…) · publicação {{ "liberada" if qualidade.erros == 0 else "bloqueada" }}</p>
+  <table class="tn qual">
+    <thead><tr><th>Código</th><th>Verificação</th><th>Status</th></tr></thead>
+    <tbody>{% for v in qualidade.verificacoes %}
+      <tr><td class="cod">{{ v.codigo }}</td><td class="desc">{{ v.descricao }}</td>
+      <td class="st {{ v.status }}">{{ v.status }}</td></tr>
+    {% endfor %}</tbody>
+  </table>
+</section>
+
+</body>
+</html>

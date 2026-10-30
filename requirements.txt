@@ -4,9 +4,10 @@ openpyxl>=3.1
 pyyaml>=6.0
 pytest>=8.0
 
-# Etapa 10 — PDF (descomentar quando chegar lá)
-# jinja2>=3.1
-# playwright>=1.45
+# Etapa 10 — PDF (depois do pip install, rode uma vez: python -m playwright install chromium)
+jinja2>=3.1
+playwright>=1.45
+pypdf>=4.0          # só nos testes: lê o PDF gerado
 
 # Etapas 11 e 12 — Power BI e web (descomentar quando chegar lá)
 # pyarrow>=16.0

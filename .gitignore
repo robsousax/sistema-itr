@@ -10,6 +10,7 @@ base/*.sqlite
 base/*.tmp
 saidas/**/*.xlsx
 saidas/**/*.pdf
+saidas/**/*.html
 exportacao/*.parquet
 config/plano_de_contas_e_mapeamentos.xlsx
 

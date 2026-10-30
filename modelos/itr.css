@@ -1,0 +1,60 @@
+/* ITR em PDF: A4 retrato, tipografia do sistema (funciona sem internet), números tabulares. */
+:root {
+  --tinta: #1b2733; --suave: #5b6672; --regua: #d9dee3; --faixa: #eef2f5;
+  --acento: #1f5f7a; --neg: #9a3b2e; --bom: #2e7d4f; --alerta: #9a6a12;
+  --texto: "Segoe UI", "Helvetica Neue", Arial, "Liberation Sans", "DejaVu Sans", sans-serif;
+  --titulo: Georgia, "Times New Roman", "Liberation Serif", serif;
+  --num: Consolas, "DejaVu Sans Mono", "Courier New", monospace;
+}
+@page { size: A4; margin: 18mm 14mm 16mm 14mm; }
+* { box-sizing: border-box; }
+body { font-family: var(--texto); font-size: 9.5pt; color: var(--tinta); margin: 0; line-height: 1.4; }
+h1, h2, h3 { font-family: var(--titulo); font-weight: 600; margin: 0; }
+h2 { font-size: 16pt; margin-bottom: 2mm; border-bottom: 1.5pt solid var(--tinta); padding-bottom: 1.5mm; }
+h3 { font-size: 11pt; margin: 4mm 0 1mm; }
+p { margin: 0 0 2mm; text-align: justify; }
+a { color: var(--acento); text-decoration: none; }
+.pagina { page-break-before: always; }
+.nota-sec { color: var(--suave); font-size: 8.5pt; margin-bottom: 3mm; text-align: left; }
+
+.capa { height: 255mm; display: flex; flex-direction: column; justify-content: center; gap: 5mm; }
+.capa-topo { font-family: var(--num); font-size: 8.5pt; color: var(--suave); letter-spacing: .03em; }
+.capa h1 { font-size: 30pt; color: var(--tinta); }
+.capa-periodo { font-size: 14pt; }
+.capa-sub { color: var(--suave); }
+.destaques { margin: 6mm 0; padding: 4mm 0 4mm 6mm; border-left: 2pt solid var(--acento); list-style: none; }
+.destaques li { margin: 1.5mm 0; font-size: 10.5pt; }
+.selo { font-size: 8pt; text-transform: uppercase; letter-spacing: .08em; color: var(--acento); }
+.capa-rodape { margin-top: auto; font-size: 8pt; color: var(--suave); border-top: .5pt solid var(--regua); padding-top: 3mm; }
+
+.indice { font-size: 11pt; line-height: 2; padding-left: 6mm; }
+
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 8.5pt; }
+th { font-weight: 600; font-size: 7.5pt; color: var(--suave); text-align: right; padding: 1.5mm 2mm;
+     border-bottom: .75pt solid var(--tinta); vertical-align: bottom; }
+th .sub { display: block; font-weight: 400; }
+th.cod, th.desc, table.tn th:first-child { text-align: left; }
+td { padding: .55mm 2mm; border-bottom: .3pt solid var(--regua); }
+td.cod { font-family: var(--num); font-size: 7.5pt; color: var(--suave); white-space: nowrap; width: 22mm; }
+td.v { text-align: right; font-family: var(--num); font-size: 8pt; white-space: nowrap; }
+td.neg { color: var(--neg); }
+td.n2 { padding-left: 2mm; } td.n3 { padding-left: 5mm; } td.n4 { padding-left: 8mm; } td.n5 { padding-left: 11mm; }
+tr.grupo td, tr.formula td, tr.total td { font-weight: 600; }
+tr.formula td, tr.total td { background: var(--faixa); }
+tr.total td { border-top: .75pt solid var(--tinta); }
+tr.n4 td, tr.n5 td { color: var(--suave); }
+tr { page-break-inside: avoid; }
+.rodape-tab { font-size: 8pt; color: var(--suave); margin-top: 2mm; }
+
+.nota { margin-bottom: 5mm; }
+.nota h3 { display: flex; gap: 3mm; align-items: baseline; border-top: .5pt solid var(--regua); padding-top: 3mm; }
+.nota h3 .num { font-family: var(--num); font-size: 9pt; color: var(--acento); }
+.quadro { margin: 2mm 0 3mm; page-break-inside: avoid; }
+.qt { font-weight: 600; font-size: 8.5pt; margin-bottom: 1mm; } .qt span { font-weight: 400; color: var(--suave); }
+table.tn td.desc { font-size: 8.5pt; }
+
+table.ind td.desc .formula { display: block; font-size: 6.5pt; color: var(--suave); }
+tr.grp td { font-size: 7pt; text-transform: uppercase; letter-spacing: .08em; color: var(--acento);
+            padding-top: 3mm; border-bottom: .5pt solid var(--regua); }
+td.st { text-transform: uppercase; font-size: 7pt; font-weight: 600; letter-spacing: .05em; }
+td.st.aprovado { color: var(--bom); } td.st.alerta { color: var(--alerta); } td.st.erro { color: var(--neg); }
