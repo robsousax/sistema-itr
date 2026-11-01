@@ -71,7 +71,7 @@ As políticas contábeis e as simplificações estão em `docs/01_empresa_e_poli
   execução fica gravada com data, hora e resultado.
 - **Conferências por fórmula** no Excel e **conferências na tela** no painel web. Todas devem dar
   zero.
-- **250 testes automáticos** (`pytest`), incluindo testes de mutação: regras quebradas de propósito
+- **255 testes automáticos** (`pytest`), incluindo testes de mutação: regras quebradas de propósito
   para confirmar que os testes acusam.
 
 ## O painel
@@ -81,7 +81,14 @@ O Python exporta um modelo estrela em Parquet (5 dimensões, 4 fatos). O painel 
 demonstrações diz como deve ser agregada no tempo. Fluxos somam os trimestres. Saldos de balanço
 ficam com o último trimestre: é a regra semiaditiva, conferida pelos testes contra o 9M26 do ITR.
 
-![Painel web: demonstrações com a coluna Período](docs/img/painel_demonstracoes.png)
+| | |
+| --- | --- |
+| ![Fluxo de caixa](docs/img/painel_fluxo_de_caixa.png) | ![Demonstrações com a coluna Período](docs/img/painel_demonstracoes.png) |
+| ![Resultado](docs/img/painel_resultado.png) | ![Central de qualidade](docs/img/painel_qualidade.png) |
+
+O painel tem oito páginas: visão geral, resultado (cascata da receita ao lucro e margens), balanço
+(composição do ativo e estrutura de capital), fluxo de caixa (ponte de caixa e DVA), capital de giro
+(prazos médios e ciclo financeiro), demonstrações linha a linha, Central de qualidade e download do ITR.
 
 O mesmo modelo está pronto para o Power BI: as consultas Power Query e as medidas DAX, comentadas,
 ficam em `powerbi/`, e o roteiro para montar o painel está em `docs/11_power_bi.md`. O arquivo .pbix

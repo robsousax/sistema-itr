@@ -14,23 +14,32 @@ regras das medidas DAX.
 | Arquivo | Papel |
 | --- | --- |
 | `src/painel_dados.py` | Toda a lógica: carregar os Parquet, a regra semiaditiva, destaques, matriz, indicadores e conferências. Não depende do Streamlit, por isso é testável |
-| `app/painel.py` | Só a tela: abas, filtros, cartões, gráficos (Altair) e tabelas |
-| `.streamlit/config.toml` | Cores do painel, as mesmas do PDF do ITR |
+| `app/painel.py` | Só a tela: menu lateral, filtros, cartões, gráficos (Altair), tabelas e o CSS do visual |
+| `.streamlit/config.toml` | Cores do tema (azul royal, branco e vermelho tomate) para os controles nativos do Streamlit |
 | `exemplos/exportacao/` | Cópia da exportação que vai para o GitHub. O app publicado na web lê daqui |
 
 O app procura os dados primeiro em `exportacao/` (gerada por `python src/exportar_parquet.py`, fora do
 Git) e, se não achar, em `exemplos/exportacao/`. Assim, na sua máquina ele mostra a base atual e, na
 web, mostra a cópia publicada.
 
-## As abas
+## As páginas
 
-| Aba | O que mostra | Equivale a |
-| --- | --- | --- |
-| Visão geral | Seis indicadores do trimestre escolhido, receita e EBITDA, margens | Página 1 do Power BI |
-| Demonstrações | Qualquer demonstração, nos trimestres escolhidos, com a coluna Período | Página 2 |
-| Indicadores | Os 21 indicadores por trimestre e o gráfico de prazos médios | Página 3 |
-| Qualidade | Resultado da Central, as quatro conferências e as 20 verificações | Página 4 |
-| Baixar o ITR | O PDF e o Excel do 3T26 de `exemplos/` | — |
+O menu lateral tem oito páginas. Cada uma tem um filtro no alto: um trimestre (posição do balanço) ou um
+período de trimestres (fluxos como DRE e DFC, somados pela regra semiaditiva).
+
+| Página | O que mostra |
+| --- | --- |
+| Visão geral | Cartão de destaque com a receita e as margens, composição do ativo, EBITDA, lucro, caixa líquido, receita por trimestre, cascata da receita ao lucro, liquidez, ciclo financeiro e ROE |
+| Resultado | Receita, resultado bruto, EBITDA e lucro do período; cascata da DRE; margens por trimestre; para onde vai cada real de receita |
+| Balanço | Ativo, PL e liquidez; composição do ativo; estrutura de capital (PC, PNC, PL); caixa, dívida bruta e PL por trimestre |
+| Fluxo de caixa | Caixa das operações, investimentos e financiamentos; ponte do saldo inicial ao final; distribuição do valor adicionado (DVA); caixa por atividade em cada trimestre |
+| Capital de giro | PMR, PME, PMP e ciclo financeiro com a variação sobre o trimestre anterior; evolução dos prazos; como o ciclo se forma |
+| Demonstrações | Qualquer demonstração, linha a linha, com a coluna Período |
+| Central de qualidade | Situação da publicação, as quatro conferências do painel e as 20 verificações |
+| Baixar o ITR | O PDF e o Excel do 3T26 |
+
+O visual (azul royal #20309A, branco e vermelho tomate #B8232B; menu escuro e cartões arredondados) está no CSS no começo de `app/painel.py`. Os
+gráficos são feitos com Altair e todos os números vêm de `src/painel_dados.py`.
 
 ## Publicar na web (Streamlit Community Cloud, gratuito)
 
@@ -61,14 +70,15 @@ Copy-Item saidas\3T26\ITR_Orbe_3T26.pdf, saidas\3T26\ITR_Orbe_3T26.xlsx exemplos
 
 O teste `test_exemplo_publicado_esta_atualizado` falha se a cópia ficar diferente do motor.
 
-## Testes (`testes/test_painel.py`, 17 testes)
+## Testes (`testes/test_painel.py`, 22 testes)
 
 - Os destaques do 3T26 são os números da DRE e do BP do motor.
 - A coluna Período reproduz o 9M26 de DRE e DFC; no BP ela é o saldo do último trimestre.
 - As quatro conferências dão zero em todos os trimestres e acusam diferença quando um número muda.
 - A formatação dos indicadores segue o padrão brasileiro (29,7%; 2,19x; -13.086).
 - A cópia em `exemplos/exportacao/` está igual ao motor.
-- O app Streamlit roda inteiro sem erro (`streamlit.testing`) e mostra a publicação liberada.
+- A cascata do resultado termina no lucro líquido, a ponte de caixa termina no saldo final e as composições somam 100%.
+- O app Streamlit abre as oito páginas sem erro (`streamlit.testing`).
 
 Teste de mutação: fazer o saldo inicial de caixa pegar o último trimestre derruba o teste da DFC.
 

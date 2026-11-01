@@ -1,10 +1,10 @@
-# Aparência do painel web: mesmas cores do PDF do ITR
+# Aparência do painel web: azul royal, branco e vermelho tomate, as mesmas cores do app/painel.py
 [theme]
 base = "light"
-primaryColor = "#1f5f7a"
-textColor = "#1b2733"
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#eef2f5"
+primaryColor = "#20309A"
+textColor = "#0f1b3d"
+backgroundColor = "#f2f6fb"
+secondaryBackgroundColor = "#e5ebf5"
 
 [browser]
 gatherUsageStats = false

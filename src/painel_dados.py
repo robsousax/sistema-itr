@@ -173,3 +173,87 @@ def conferencias(d: Dados, tri: str) -> pd.DataFrame:
     tabela["Diferença (R$)"] = tabela["Diferença (R$)"].round(2) + 0.0  # evita "-0,00"
     tabela["OK"] = tabela["Diferença (R$)"].abs() < 0.01
     return tabela
+
+
+# ---------------------------------------------------------------- gráficos do painel (versão 2)
+
+def periodo(trimestres: list[str]) -> str:
+    """Rótulo do período escolhido: '3T26' ou '1T26 a 3T26'."""
+    return trimestres[0] if len(trimestres) == 1 else f"{trimestres[0]} a {trimestres[-1]}"
+
+
+def cascata_resultado(d: Dados, trimestres: list[str]) -> pd.DataFrame:
+    """Da receita ao lucro líquido, em degraus (gráfico de cascata). Em R$."""
+    passos = [("Receita líquida", "3.01", "total"), ("Custo das vendas", "3.02", "passo"),
+              ("Despesas com vendas", "3.04.01", "passo"), ("Despesas gerais", "3.04.02", "passo"),
+              ("Perda de crédito", "3.04.03", "passo"),
+              ("Outras operacionais", ("3.04.04", "3.04.05"), "passo"),
+              ("Resultado financeiro", "3.06", "passo"), ("IR e CSLL", "3.08", "passo")]
+    linhas, acumulado = [], 0.0
+    for nome, codigos, tipo in passos:
+        codigos = codigos if isinstance(codigos, tuple) else (codigos,)
+        valor = sum(valor_df(d, c, trimestres) or 0.0 for c in codigos)
+        inicio = 0.0 if tipo == "total" else acumulado
+        acumulado = valor if tipo == "total" else acumulado + valor
+        linhas.append({"etapa": nome, "inicio": inicio, "fim": acumulado, "valor": valor, "tipo": tipo})
+    lucro = valor_df(d, "3.11", trimestres) or 0.0
+    linhas.append({"etapa": "Lucro líquido", "inicio": 0.0, "fim": lucro, "valor": lucro, "tipo": "total"})
+    return pd.DataFrame(linhas)
+
+
+def ponte_caixa(d: Dados, trimestres: list[str]) -> pd.DataFrame:
+    """Saldo inicial de caixa + atividades = saldo final (DFC em degraus). Em R$."""
+    passos = [("Saldo inicial", "6.05.01", "total"), ("Operacional", "6.01", "passo"),
+              ("Investimento", "6.02", "passo"), ("Financiamento", "6.03", "passo")]
+    linhas, acumulado = [], 0.0
+    for nome, codigo, tipo in passos:
+        valor = valor_df(d, codigo, trimestres) or 0.0
+        inicio = 0.0 if tipo == "total" else acumulado
+        acumulado = valor if tipo == "total" else acumulado + valor
+        linhas.append({"etapa": nome, "inicio": inicio, "fim": acumulado, "valor": valor, "tipo": tipo})
+    final = valor_df(d, "6.05.02", trimestres) or 0.0
+    linhas.append({"etapa": "Saldo final", "inicio": 0.0, "fim": final, "valor": final, "tipo": "total"})
+    return pd.DataFrame(linhas)
+
+
+COMPOSICAO_ATIVO = [("Caixa", "1.01.01"), ("Clientes", "1.01.03"), ("Estoques", "1.01.04"),
+                    ("Tributos", "1.01.06"), ("Outros", ("1.01.07", "1.01.08")),
+                    ("IR diferido", "1.02.01"), ("Imobilizado", "1.02.03"), ("Intangível", "1.02.04")]
+
+
+def composicao_ativo(d: Dados, tri: str) -> pd.DataFrame:
+    linhas = []
+    for nome, codigos in COMPOSICAO_ATIVO:
+        codigos = codigos if isinstance(codigos, tuple) else (codigos,)
+        linhas.append({"item": nome, "valor": sum(v(d, c, tri) for c in codigos)})
+    df = pd.DataFrame(linhas)
+    df["participacao"] = df.valor / v(d, "1", tri)
+    return df
+
+
+def estrutura_capital(d: Dados, tri: str) -> pd.DataFrame:
+    df = pd.DataFrame([{"item": "Passivo circulante", "valor": v(d, "2.01", tri)},
+                       {"item": "Passivo não circulante", "valor": v(d, "2.02", tri)},
+                       {"item": "Patrimônio líquido", "valor": v(d, "2.03", tri)}])
+    df["participacao"] = df.valor / v(d, "2", tri)
+    return df
+
+
+def distribuicao_valor_adicionado(d: Dados, trimestres: list[str]) -> pd.DataFrame:
+    itens = [("Pessoal", "7.08.01"), ("Impostos", "7.08.02"), ("Capital de terceiros", "7.08.03"),
+             ("Acionistas", "7.08.04")]
+    df = pd.DataFrame([{"item": n, "valor": valor_df(d, c, trimestres) or 0.0} for n, c in itens])
+    df["participacao"] = df.valor / (valor_df(d, "7.08", trimestres) or 1)
+    return df
+
+
+def serie_balanco(d: Dados) -> pd.DataFrame:
+    """Caixa, dívida bruta e PL no fim de cada trimestre. Em R$."""
+    return pd.DataFrame([{"trimestre": t, "Caixa e equivalentes": v(d, "1.01.01", t),
+                          "Dívida bruta": v(d, "2.01.04", t) + v(d, "2.02.01", t),
+                          "Patrimônio líquido": v(d, "2.03", t)} for t in d.trimestres])
+
+
+def serie_indicador(d: Dados, codigos: dict[str, str]) -> pd.DataFrame:
+    return pd.DataFrame([{"trimestre": t, "indicador": nome, "valor": indicador(d, c, t)}
+                         for c, nome in codigos.items() for t in d.trimestres])

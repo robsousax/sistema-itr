@@ -120,7 +120,35 @@ def test_exemplo_publicado_esta_atualizado(d):
     pd.testing.assert_frame_equal(copia, atual)
 
 
-def test_app_streamlit_roda_sem_erro():
+def test_cascata_do_resultado_termina_no_lucro(d):
+    tris = ["1T26", "2T26", "3T26"]
+    c = pdados.cascata_resultado(d, tris)
+    assert c.fim.iloc[-2] == pytest.approx(pdados.valor_df(d, "3.11", tris), abs=0.01)
+    assert c.etapa.iloc[0] == "Receita líquida" and c.etapa.iloc[-1] == "Lucro líquido"
+
+
+def test_ponte_de_caixa_termina_no_saldo_final(d):
+    for tris in (["3T26"], ["1T26", "2T26", "3T26"], d.trimestres):
+        p = pdados.ponte_caixa(d, tris)
+        assert p.fim.iloc[-2] == pytest.approx(pdados.valor_df(d, "6.05.02", tris), abs=0.01)
+
+
+@pytest.mark.parametrize("funcao", [pdados.composicao_ativo, pdados.estrutura_capital])
+def test_composicoes_somam_100_por_cento(d, funcao):
+    for tri in d.trimestres:
+        assert funcao(d, tri).participacao.sum() == pytest.approx(1)
+
+
+def test_distribuicao_do_valor_adicionado_soma_o_total(d):
+    dva = pdados.distribuicao_valor_adicionado(d, ["1T26", "2T26", "3T26"])
+    assert dva.valor.sum() == pytest.approx(pdados.valor_df(d, "7.08", ["1T26", "2T26", "3T26"]), abs=0.01)
+
+
+PAGINAS = ["Visão geral", "Resultado", "Balanço", "Fluxo de caixa", "Capital de giro", "Demonstrações",
+           "Central de qualidade", "Baixar o ITR"]
+
+
+def test_app_streamlit_roda_todas_as_paginas_sem_erro():
     pytest.importorskip("streamlit")
     from streamlit.testing.v1 import AppTest
     try:
@@ -129,6 +157,8 @@ def test_app_streamlit_roda_sem_erro():
         pytest.skip("sem exportação para o app ler")
     app = AppTest.from_file(str(RAIZ / "app" / "painel.py"), default_timeout=60).run()
     assert not app.exception
-    rotulos = {m.label for m in app.metric}
-    assert {"Receita líquida", "EBITDA", "Lucro líquido", "Publicação"} <= rotulos
-    assert next(m for m in app.metric if m.label == "Publicação").value == "Liberada"
+    assert app.sidebar.radio[0].options == PAGINAS
+    assert "28.194" in " ".join(m.value for m in app.markdown)  # receita do 3T26 no cartão de destaque
+    for pagina in PAGINAS[1:]:
+        app.sidebar.radio[0].set_value(pagina).run()
+        assert not app.exception, pagina
