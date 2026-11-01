@@ -41,7 +41,7 @@ html, body, .stApp, .stMarkdown, button, input, textarea, select {{ font-family:
 .stApp {{ background: var(--fundo); color: var(--tinta); }}
 header[data-testid="stHeader"] {{ background: transparent; }}
 #MainMenu, footer {{ visibility: hidden; }}
-.block-container {{ padding-top: 1.6rem; padding-bottom: 3rem; max-width: 1400px; }}
+.block-container {{ padding-top: 1.4rem; padding-bottom: 3rem; padding-left: 2.5rem; padding-right: 2.5rem; max-width: 100%; }}
 
 /* menu lateral escuro */
 section[data-testid="stSidebar"] {{ background: var(--lateral); }}
